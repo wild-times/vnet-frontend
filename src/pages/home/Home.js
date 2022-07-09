@@ -6,7 +6,7 @@ function ExistingMeeting (props) {
 
     return (
         <div className="ex-meeting">
-            <span>{title} starting at {startTime} | <NavLink to={`/set-up-meeting/${meetingId}/`}>Join</NavLink></span>
+            <span>{title} starting at {startTime} | <NavLink to={`/conf/${meetingId}/`}>Join</NavLink></span>
         </div>
     )
 }
@@ -51,7 +51,7 @@ export default function Home () {
         event_.preventDefault();
         const f = new FormData(event_.target);
         const code = f.get('join-code');
-        navigate(`/set-up-meeting/${code}/`)
+        navigate(`/conf/${code}/`)
     };
 
     return (
