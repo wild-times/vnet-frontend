@@ -34,9 +34,9 @@ function MeetingLite (props) {
 
         // create acs variables
         const acs = async () => {
-            const _tokenCredential = await new AzureCommunicationTokenCredential(user['acsToken']);
-            const _callClient = await new CallClient();
-            const _callAgent = _callClient.createCallAgent(_tokenCredential, {
+            const _tokenCredential = new AzureCommunicationTokenCredential(user['acsToken']);
+            const _callClient = new CallClient();
+            const _callAgent = await _callClient.createCallAgent(_tokenCredential, {
                 displayName: getDisplayName()
             });
 
@@ -55,22 +55,25 @@ function MeetingLite (props) {
             setCallAgent(_args[2]);
             setDeviceManager(_args[3]);
             setDevicePermissions(_args[4]);
-        }).catch((e) => console.log(e));
+        }).catch((e) => console.error(e));
+
+        return () => callAgent? callAgent.dispose(): void 0;
     }, [meeting, user]);
 
     const toShow = (() => {
-        let comp = null;
+        let comp = <div>Setting up</div>;
 
         if (tokenCredential && callClient && callAgent && deviceManager && devicePermissions.audio && devicePermissions.video) {
             const dep = {
                 switchMeeting: inMeetingSwitch,
+                host: user['username'] === meeting['host']['username'],
                 localStream,
                 setLocalStream,
                 callAgent,
                 callClient,
                 deviceManager,
                 meeting,
-                user
+                user,
             };
 
             comp = inMeeting? <MeetingRoom {...dep}/>: <SetUp {...dep} />
@@ -89,8 +92,12 @@ function MeetingLite (props) {
 
 export default function Meeting () {
     const { meetingCode } = useParams();
-    const { data: userData } = useQuery('user', getUserDetails);
-    const { status, data: meetingData } = useQuery(['meeting', userData, meetingCode], () => fetchMeeting(meetingCode));
+    const { data: userData } = useQuery('user', getUserDetails, {
+        refetchOnWindowFocus: false
+    });
+    const { status, data: meetingData } = useQuery(['meeting', userData, meetingCode], () => fetchMeeting(meetingCode), {
+        refetchOnWindowFocus: false
+    });
 
     // TODO: to be replaced with better pages for loading...etc
     if (status === 'loading') {

@@ -10,7 +10,9 @@ import { getUserDetails } from './utils/req';
 
 
 function App () {
-    const { status } = useQuery('user', getUserDetails);
+    const { status } = useQuery('user', getUserDetails, {
+        refetchOnWindowFocus: false
+    });
 
     // TODO: to be replaced with better pages for loading...etc
     if (status === 'loading') {
