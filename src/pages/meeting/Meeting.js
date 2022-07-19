@@ -23,7 +23,7 @@ export default function Meeting () {
     const { data: userData } = useQuery('user', getUserDetails);
     const { status, data: meetingData } = useQuery(['meeting', userData, meetingCode], () => fetchMeeting(meetingCode));
 
-    // to be replaced with better pages for loading...etc
+    // TODO: to be replaced with better pages for loading...etc
     if (status === 'loading') {
         return <div>working on meeting</div>
     } else if (status === 'error') {

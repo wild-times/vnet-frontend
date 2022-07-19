@@ -46,7 +46,7 @@ export default function CreateMeeting () {
 
         // save data to the backend
         saveNewMeeting(meetingData).then((data) => {
-            const _id = data.meetingId;
+            const _id = data['meetingId'];
             _id? navigate(`/conf/${_id}/`): setError(true);
         }).catch(() => setError(true));
     };

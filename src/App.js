@@ -12,7 +12,7 @@ import { getUserDetails } from './utils/req';
 function App () {
     const { status } = useQuery('user', getUserDetails);
 
-    // to be replaced with better pages for loading...etc
+    // TODO: to be replaced with better pages for loading...etc
     if (status === 'loading') {
         return <div id="vnet-home">working</div>
     } else if (status === 'error') {

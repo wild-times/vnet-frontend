@@ -20,7 +20,7 @@ export default function Home () {
     const navigate = useNavigate();
     const { status, data: _meetings } = useQuery('meetings', fetchMeetings);
 
-    // to be replaced with better pages for loading...etc
+    // TODO: to be replaced with better pages for loading...etc
     if (status === 'loading') {
         return <div>working on meetings</div>
     } else if (status === 'error') {
