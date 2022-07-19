@@ -19,6 +19,7 @@ export async function getUserDetails () {
     return cleaner(resJ);
 }
 
+
 export async function saveNewMeeting (meeting) {
     /* Sends a new meeting to the backend */
     const data = await fetch(reqData.createMeetingUrl, {
@@ -33,9 +34,23 @@ export async function saveNewMeeting (meeting) {
     return cleaner(await data.json());
 }
 
+
+export async function fetchMeetings () {
+    const data = await fetch(reqData.getMeetingsUrl, {
+        method: "GET",
+        headers: {
+            "Authorization": `Token ${reqData.authToken}`
+        }
+    });
+
+    const { meetings } = await data.json();
+    return meetings.map(cleaner);
+}
+
+
 export async function fetchMeeting (meetingId) {
     /* Fetch a meeting from the backend */
-    const data = await fetch(`${reqData.getMeetingsUrl}/${meetingId}/`, {
+    const data = await fetch(`${reqData.getMeetingsUrl}${meetingId}/`, {
         method: "GET",
         headers: {
             "Authorization": `Token ${reqData.authToken}`

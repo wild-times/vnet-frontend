@@ -1,12 +1,15 @@
 import { NavLink, useNavigate } from 'react-router-dom';
+import { useQuery } from "react-query";
+import { fetchMeetings } from "../../utils/req";
 
 // represents meetings already created, and lets you join immediately
 function ExistingMeeting (props) {
     const { title, startTime, meetingId } = props;
+    const start = new Date(startTime).toString();
 
     return (
         <div className="ex-meeting">
-            <span>{title} starting at {startTime} | <NavLink to={`/conf/${meetingId}/`}>Join</NavLink></span>
+            <span>{title} starting at {start} | <NavLink to={`/conf/${meetingId}/`}>Join</NavLink></span>
         </div>
     )
 }
@@ -14,39 +17,20 @@ function ExistingMeeting (props) {
 
 // this is the initial page
 export default function Home () {
-    const _meetings = [
-        {
-            title: 'When was yesterday',
-            startTime: new Date('2022-09-09 19:00:00.0+03:00').toString(),
-            meetingId: 'edklkl4l42m'
-        },
-        {
-            title: 'When is yesterday',
-            startTime: new Date('2022-11-09 19:00:00.0+03:00').toString(),
-            meetingId: 'HHsaswdjwjk2m'
-        },
-        {
-            title: 'DOuble tr',
-            startTime: new Date('2022-10-09 19:00:00.0+03:00').toString(),
-            meetingId: 'edklkl4l42m'
-        },
-        {
-            title: 'Fudge',
-            startTime: new Date('2022-06-09 19:00:00.0+03:00').toString(),
-            meetingId: 'edklkl4l42m'
-        },
-        {
-            title: 'New Era',
-            startTime: new Date('2023-09-09 19:00:00.0+03:00').toString(),
-            meetingId: '342lkl4l42m'
-        }
-    ];
+    const navigate = useNavigate();
+    const { status, data: _meetings } = useQuery('meetings', fetchMeetings);
 
-    // TODO: Every thing below this line is to be preserved. This line and everything above is to be replaced finally.
+    // to be replaced with better pages for loading...etc
+    if (status === 'loading') {
+        return <div>working on meetings</div>
+    } else if (status === 'error') {
+        return <div>An error occurred fetching meetings</div>
+    }
+
+    // the real work begins
     const meetings = _meetings.map((meeting, k) => <ExistingMeeting key={k} {...meeting}/>);
 
     // when the code is entered
-    const navigate = useNavigate();
     const joinFormSubmit = (event_) => {
         event_.preventDefault();
         const f = new FormData(event_.target);
@@ -61,7 +45,7 @@ export default function Home () {
             <div id="ex-meetings">
                 <h2>Join the meetings below or enter a code meeting code to join</h2>
                 <div className="meetings">
-                    {meetings}
+                    {meetings.length? meetings: <h3>No meetings scheduled</h3>}
                 </div>
 
                 <div id="join-with-code">
