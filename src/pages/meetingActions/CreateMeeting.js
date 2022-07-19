@@ -1,8 +1,16 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { saveNewMeeting } from "../../utils/req";
+
 // add 0 to numbers below ten: 9 -> 09, 12 -> 12, assumes all numbers are positive
 const zeroPen = (num) => num < 10? `0${num.toString()}`: num.toString();
 
 
 export default function CreateMeeting () {
+    const navigate = useNavigate();
+    const [error, setError] = useState(false);
+
     // format a date for the backend
     const fDate = (dateS) => {
         const entDate = new Date(dateS);
@@ -36,12 +44,18 @@ export default function CreateMeeting () {
         [...f.entries()].forEach(([key, entry]) => meetingData[key] = key.match(/time/g)? fDate(entry): entry);
         [...event_.target].forEach((el) => el.disabled = true);
 
-        // TODO: add code to send details to backend, handle errors and success
+        // save data to the backend
+        saveNewMeeting(meetingData).then((data) => {
+            const _id = data.meetingId;
+            _id? navigate(`/conf/${_id}/`): setError(true);
+        }).catch(() => setError(true));
     };
 
     return (
         <div id='vnet-create-meeting'>
             <h2>Schedule a new meeting</h2>
+
+            {error? <div><p>Error creating meeting, please refresh the page and try again</p></div>: void 0}
 
             <form onSubmit={createMeetingHandler}>
                 <div>
