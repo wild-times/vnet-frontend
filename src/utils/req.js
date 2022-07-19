@@ -16,7 +16,7 @@ export async function getUserDetails () {
         throw new Error('Couldn\'t fetch details')
     }
 
-    return cleaner(resJ.details);
+    return cleaner(resJ);
 }
 
 export async function saveNewMeeting (meeting) {
@@ -27,6 +27,17 @@ export async function saveNewMeeting (meeting) {
         headers: {
             "Authorization": `Token ${reqData.authToken}`,
             "Content-Type": "application/json"
+        }
+    });
+
+    return cleaner(await data.json());
+}
+
+export async function fetchMeeting (meetingId) {
+    const data = await fetch(`${reqData.getMeetingsUrl}/${meetingId}/`, {
+        method: "GET",
+        headers: {
+            "Authorization": `Token ${reqData.authToken}`
         }
     });
 
