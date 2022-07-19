@@ -16,7 +16,7 @@ function App () {
     if (status === 'loading') {
         return <div id="vnet-home">working</div>
     } else if (status === 'error') {
-        return <div id="vnet-home">An error occured</div>
+        return <div id="vnet-home">An error occurred</div>
     }
 
     return (
