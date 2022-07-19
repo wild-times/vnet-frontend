@@ -34,6 +34,7 @@ export async function saveNewMeeting (meeting) {
 }
 
 export async function fetchMeeting (meetingId) {
+    /* Fetch a meeting from the backend */
     const data = await fetch(`${reqData.getMeetingsUrl}/${meetingId}/`, {
         method: "GET",
         headers: {
