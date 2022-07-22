@@ -36,11 +36,7 @@ export default function SetupMeeting (props) {
                     break;
 
                 case 'Connected':
-                    switchMeeting(true);
-                    break;
-
-                case 'Disconnected':
-                    joinText.current.innerText = 'Disconnected from call';
+                    switchMeeting(2);
                     break;
 
                 default:

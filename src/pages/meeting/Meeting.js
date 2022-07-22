@@ -6,12 +6,14 @@ import { CallClient } from '@azure/communication-calling';
 
 import MeetingRoom from './MeetingRoom';
 import SetUp from './SetUpMeeting';
+import LeftMeeting from "./AfterMeeting";
 import { fetchMeeting, getUserDetails } from "../../utils/req";
 
 
 function MeetingLite (props) {
     const { user, meeting } = props;
-    const [inMeeting, inMeetingSwitch] = useState(false);
+    // choices are 1, 2, 3: 1 = set up, 2 = meeting room/in meeting, 3 = left meeting.
+    const [inMeeting, inMeetingSwitch] = useState(1);
     const [tokenCredential, setTokenCredential] = useState(null);
     const [callClient, setCallClient] = useState(null);
     const [callAgent, setCallAgent] = useState(null);
@@ -76,7 +78,13 @@ function MeetingLite (props) {
                 user,
             };
 
-            comp = inMeeting? <MeetingRoom {...dep}/>: <SetUp {...dep} />
+            if (inMeeting === 1) {
+                comp = <SetUp {...dep}/>
+            } else if (inMeeting === 2) {
+                comp = <MeetingRoom {...dep} />
+            } else if (inMeeting === 3) {
+                comp = <LeftMeeting {...dep} />
+            }
         }
 
         return comp;
