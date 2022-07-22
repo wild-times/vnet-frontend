@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { LocalVideoStream } from '@azure/communication-calling';
 
 import { MeetingVideo } from './MeetingItems';
@@ -10,11 +10,44 @@ function DeviceOption ({ name, index }) {
 
 
 export default function SetupMeeting (props) {
-    const { switchMeeting, callAgent, deviceManager, setLocalStream, localStream } = props;
+    const { switchMeeting, meeting, callAgent, deviceManager, setLocalStream, localStream } = props;
     const [cameras, setCameras] = useState([]);
     const [mics, setMics] = useState([]);
+    const joinButton = useRef(null);
+    const joinText = useRef(null);
     const micOptions = mics.map((mic, i) => <DeviceOption key={i} name={mic.name} index={i} />);
     const cameraOptions = cameras.map((cam, i) => <DeviceOption key={i} name={cam.name} index={i}/>);
+
+    // join call button
+    const joinCallEventHandler = () => {
+        // join call here
+        const callOptions = {
+            videoOptions: {localVideoStreams: [localStream]}
+        };
+
+        const _call = callAgent.join({
+            groupId: meeting['meetingUuid']
+        }, callOptions);
+
+        _call.on('stateChanged', () => {
+            switch (_call.state) {
+                case 'Connecting':
+                    joinText.current.innerText = 'Connecting to call';
+                    break;
+
+                case 'Connected':
+                    switchMeeting(true);
+                    break;
+
+                case 'Disconnected':
+                    joinText.current.innerText = 'Disconnected from call';
+                    break;
+
+                default:
+                    break;
+            }
+        });
+    };
 
     useEffect(() => {
         // load devices and display local stream
@@ -29,11 +62,17 @@ export default function SetupMeeting (props) {
             setCameras(cameras);
             setMics(mics);
             setLocalStream(_localStream);
-
-
         }).catch((e) => console.log(e));
 
-    }, [deviceManager]);
+    }, [deviceManager, setLocalStream]);
+
+    useEffect(() => {
+        if (cameras.length && mics.length) {
+            joinButton.current.disabled = false;
+            joinButton.current.addEventListener('click', joinCallEventHandler);
+            joinText.current.style.display = 'block';
+        }
+    }, [cameras, mics, joinButton]);
 
     const switchCamera = async (switchEvent) => {
         await localStream.switchSource(cameras[switchEvent.target.value]);
@@ -56,6 +95,11 @@ export default function SetupMeeting (props) {
                     <select onChange={switchCamera}>{cameraOptions}</select>
                     <select onChange={switchMic}>{micOptions}</select>
                 </form>
+            </div>
+
+            <div className='join-call-options'>
+                <span ref={joinText} style={{display: 'none'}}>Waiting to join</span>
+                <button ref={joinButton} disabled={true}>Join call</button>
             </div>
 
         </div>
