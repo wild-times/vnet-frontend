@@ -2,12 +2,32 @@ import cleaner from './case';
 import reqData from './wild';
 
 
-export async function getUserDetails () {
+export async function getUserDetailsWithCreds (username, password) {
+    /* Temporary handling of user requests */
+    const res = await fetch(reqData.userLogin, {
+        method: 'POST',
+        body: JSON.stringify({username, password}),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+
+    const resJ = await res.json();
+
+    if (resJ.hasOwnProperty('success') && !resJ.success) {
+        throw new Error('Couldn\'t fetch details')
+    }
+
+    return cleaner(resJ);
+}
+
+
+export async function getUserDetails (token) {
     /* Get the details of the logged in user */
     const res = await fetch(reqData.userDetailUrl, {
         method: 'GET',
         headers: {
-            'Authorization': `Token ${reqData.authToken}`
+            'Authorization': `Token ${token}`
         }
     });
     const resJ = await res.json();
@@ -20,13 +40,13 @@ export async function getUserDetails () {
 }
 
 
-export async function saveNewMeeting (meeting) {
+export async function saveNewMeeting (meeting, token) {
     /* Sends a new meeting to the backend */
     const data = await fetch(reqData.createMeetingUrl, {
         method: "POST",
         body: JSON.stringify(meeting),
         headers: {
-            "Authorization": `Token ${reqData.authToken}`,
+            "Authorization": `Token ${token}`,
             "Content-Type": "application/json"
         }
     });
@@ -35,11 +55,11 @@ export async function saveNewMeeting (meeting) {
 }
 
 
-export async function fetchMeetings () {
+export async function fetchMeetings (token) {
     const data = await fetch(reqData.getMeetingsUrl, {
         method: "GET",
         headers: {
-            "Authorization": `Token ${reqData.authToken}`
+            "Authorization": `Token ${token}`
         }
     });
 
@@ -48,12 +68,12 @@ export async function fetchMeetings () {
 }
 
 
-export async function fetchMeeting (meetingId) {
+export async function fetchMeeting (meetingId, token) {
     /* Fetch a meeting from the backend */
     const data = await fetch(`${reqData.getMeetingsUrl}${meetingId}/`, {
         method: "GET",
         headers: {
-            "Authorization": `Token ${reqData.authToken}`
+            "Authorization": `Token ${token}`
         }
     });
 

@@ -16,9 +16,10 @@ function ExistingMeeting (props) {
 
 
 // this is the initial page
-export default function Home () {
+export default function Home (props) {
+    const { token } = props;
     const navigate = useNavigate();
-    const { status, data: _meetings } = useQuery('meetings', fetchMeetings);
+    const { status, data: _meetings } = useQuery('meetings', () => fetchMeetings(token));
 
     // TODO: to be replaced with better pages for loading...etc
     if (status === 'loading') {

@@ -7,7 +7,8 @@ import { saveNewMeeting } from "../../utils/req";
 const zeroPen = (num) => num < 10? `0${num.toString()}`: num.toString();
 
 
-export default function CreateMeeting () {
+export default function CreateMeeting (props) {
+    const { token } = props;
     const navigate = useNavigate();
     const [error, setError] = useState(false);
 
@@ -45,7 +46,7 @@ export default function CreateMeeting () {
         [...event_.target].forEach((el) => el.disabled = true);
 
         // save data to the backend
-        saveNewMeeting(meetingData).then((data) => {
+        saveNewMeeting(meetingData, token).then((data) => {
             const _id = data['meetingId'];
             _id? navigate(`/conf/${_id}/`): setError(true);
         }).catch(() => setError(true));

@@ -98,12 +98,13 @@ function MeetingLite (props) {
 }
 
 
-export default function Meeting () {
+export default function Meeting (props) {
+    const { token } = props;
     const { meetingCode } = useParams();
-    const { data: userData } = useQuery('user', getUserDetails, {
+    const { data: userData } = useQuery('user', () => getUserDetails(token), {
         refetchOnWindowFocus: false
     });
-    const { status, data: meetingData } = useQuery(['meeting', userData, meetingCode], () => fetchMeeting(meetingCode), {
+    const { status, data: meetingData } = useQuery(['meeting', userData, meetingCode], () => fetchMeeting(meetingCode, userData['authToken']), {
         refetchOnWindowFocus: false
     });
 
