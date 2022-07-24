@@ -43,7 +43,7 @@ export default function MeetingRoom (props) {
         } else {
             switchMeeting(false);
         }
-    });
+    }, [call, localStream]);
 
     const localS = <MeetingVideo you={true} name={callAgent.displayName} stream={localStream}/>;
 
