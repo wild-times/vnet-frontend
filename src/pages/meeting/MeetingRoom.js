@@ -4,6 +4,7 @@ import { MeetingVideo } from "./MeetingItems";
 export default function MeetingRoom (props) {
     const { switchMeeting, callAgent, localStream } = props;
     const [participants, setParticipants] = useState([]);
+    const [partViews, setPartViews] = useState([]);
     const statusText = useRef(null);
     const call = callAgent.calls.length? callAgent.calls[0]: null;
 
@@ -15,13 +16,7 @@ export default function MeetingRoom (props) {
         if (call) {
             statusText.current.innerText = call.state;
 
-            call.on('remoteParticipantsUpdated', ({added, removed}) => {
-                if (added || removed) {
-                    setParticipants(call.remoteParticipants)
-                }
-            });
-
-            call.on('stateChanged', () => {
+            const sc = () => {
                 switch (call.state) {
                     case 'Disconnecting':
                         statusText.current.innerText = 'Leaving call';
@@ -34,7 +29,16 @@ export default function MeetingRoom (props) {
                     default:
                         break;
                 }
-            });
+            };
+
+            const participantsChange = () => {
+                setParticipants(call.remoteParticipants)
+            };
+
+            call.on('totalParticipantCountChanged', participantsChange);
+
+            call.on('stateChanged', sc);
+            call.off('stateChanged', sc);
 
         } else {
             switchMeeting(false);
@@ -42,6 +46,22 @@ export default function MeetingRoom (props) {
     });
 
     const localS = <MeetingVideo you={true} name={callAgent.displayName} stream={localStream}/>;
+
+    const loadParts = async () => {
+        const parts = [];
+
+        for (const part of participants) {
+            const rstream = await part.videoStreams[0];
+            const name = part.displayName;
+            const id_ = part.identifier;
+
+            parts.push(<MeetingVideo key={id_} you={false} name={name} stream={rstream}/>)
+        }
+
+        return parts;
+    };
+
+    loadParts().then((p) => setPartViews(p));
 
     return (
         <div id="meeting-room">
@@ -53,6 +73,8 @@ export default function MeetingRoom (props) {
 
             <div className='room-streams'>
                 {localS}
+
+                {partViews}
             </div>
 
         </div>
