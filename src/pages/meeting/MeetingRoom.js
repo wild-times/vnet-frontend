@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { MeetingVideo } from "./MeetingItems";
+import SetUpPeer from "./peer/SetUpPeer";
 
 
 function NormalParticipants (props) {
@@ -78,6 +79,8 @@ export default function MeetingRoom (props) {
                 <span ref={statusText} />
                 <button onClick={leaveMeetingEvent}>Leave call</button>
             </div>
+
+            <SetUpPeer/>
 
             <div className='room-streams'>
                 {localS}
