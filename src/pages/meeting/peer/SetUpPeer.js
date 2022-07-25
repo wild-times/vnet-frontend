@@ -38,12 +38,21 @@ function PeerShare () {
     const randomCode = Math.floor(Math.random() * (1000000 - 100000 + 1) + 100000);
 
     useEffect(() => {
+        // connect to signalling server
         const url = `ws://${window.location.hostname}:8000${reqData.signallingServer}${randomCode}/`;
         const sig = new WebSocket(url);
 
         sig.onopen = () => status.current.innerText = 'Connected to signalling server';
         sig.onclose = () => status.current.innerText = 'Not Connected to signalling server';
         sig.onmessage = (event_) => console.log(JSON.parse(event_.data), "SENDER");
+
+        // collect all streams
+        function collectStreams () {
+            const streamHomes = [...document.getElementsByClassName('video-stream-home')];
+            return streamHomes.filter((el) => {
+                return el['firstElementChild'] && el['firstElementChild']['firstElementChild'] && el['firstElementChild']['firstElementChild'].nodeName === 'VIDEO';
+            }).map((el) => el['firstElementChild']['firstElementChild'].srcObject);
+        }
 
     }, [randomCode]);
 
