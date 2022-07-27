@@ -1,75 +1,30 @@
-import { useEffect, useState, useRef } from 'react';
-
+import { useState } from 'react';
+import PeerReceive from './recieve';
+import PeerShare from './send';
 import reqData from '../../../utils/wild';
-
-
-function PeerReceive () {
-    const status = useRef(null);
-    const connectEvent = (event_) => {
-        event_.preventDefault();
-        const f = new FormData(event_.target);
-        const url = `ws://${window.location.hostname}:8000${reqData.signallingServer}${f.get('code')}/`;
-        const sig = new WebSocket(url);
-        sig.onopen = () => status.current.innerText = 'Connected to signalling server';
-        sig.onclose = () => status.current.innerText = 'Not Connected to signalling server';
-        sig.onmessage = (event_) => console.log(JSON.parse(event_.data), "RECEIVER");
-    };
-
-    return (
-        <div>
-            <span>Receive</span><br/>
-            <span ref={status}>Not Connected to signalling server</span>
-
-            <form onSubmit={connectEvent}>
-                <div>
-                    <label htmlFor="codeCon">Peer code</label>
-                    <input type="number" name="code" id="codeCon" required={true}/>
-                </div>
-
-                <input type="submit" value="connect"/>
-            </form>
-        </div>
-    )
-}
-
-
-function PeerShare () {
-    const status = useRef(null);
-    const randomCode = Math.floor(Math.random() * (1000000 - 100000 + 1) + 100000);
-
-    useEffect(() => {
-        // connect to signalling server
-        const url = `ws://${window.location.hostname}:8000${reqData.signallingServer}${randomCode}/`;
-        const sig = new WebSocket(url);
-
-        sig.onopen = () => status.current.innerText = 'Connected to signalling server';
-        sig.onclose = () => status.current.innerText = 'Not Connected to signalling server';
-        sig.onmessage = (event_) => console.log(JSON.parse(event_.data), "SENDER");
-
-        // collect all streams
-        function collectStreams () {
-            const streamHomes = [...document.getElementsByClassName('video-stream-home')];
-            return streamHomes.filter((el) => {
-                return el['firstElementChild'] && el['firstElementChild']['firstElementChild'] && el['firstElementChild']['firstElementChild'].nodeName === 'VIDEO';
-            }).map((el) => el['firstElementChild']['firstElementChild'].srcObject);
-        }
-
-    }, [randomCode]);
-
-    return (
-        <div>
-            <h2>Copy this code to your peer to host a connection</h2>
-            <span>{randomCode}</span><br/>
-            <span ref={status}>Not Connected to signalling server</span>
-        </div>
-    )
-}
 
 
 export default function SetUpPeer () {
     // gen state means what state of a WebRTC connection this is; 0 = no connection, 1 = host peer, 2 = receiving peer
     const [gen, setGen] = useState(0);
     const peerSetter = (stateDigit) => setGen(stateDigit);
+
+    const rtcOptions = {
+        signalling: (code, statusDiv) => {
+            const url = `ws://${window.location.hostname}:8000${reqData.signallingServer}${code}/`;
+            const socket = new WebSocket(url);
+            socket.onopen = () => statusDiv.innerText = 'Connected to signalling server';
+            socket.onclose = () => statusDiv.innerText = 'Not Connected to signalling server';
+            return socket;
+        },
+        signalTypes: {
+            SIGNAL_CONNECTED: 'signal_connected',
+            SIGNAL_DISCONNECTED: 'signal_disconnected',
+            OFFER: 'offer',
+            ANSWER: 'answer',
+            CANDIDATE: 'candidate'
+        }
+    };
 
     return (
         <div>
@@ -82,7 +37,7 @@ export default function SetUpPeer () {
                 </div>: null
             }
 
-            {gen === 1? <PeerShare />: gen === 2?<PeerReceive/>: null}
+            {gen === 1? <PeerShare {...rtcOptions} />: gen === 2?<PeerReceive {...rtcOptions} />: null}
         </div>
     )
 }
