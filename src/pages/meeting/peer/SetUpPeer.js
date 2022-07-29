@@ -4,7 +4,8 @@ import PeerShare from './send';
 import reqData from '../../../utils/wild';
 
 
-export default function SetUpPeer () {
+export default function SetUpPeer (props) {
+    const { name } = props;
     // gen state means what state of a WebRTC connection this is; 0 = no connection, 1 = host peer, 2 = receiving peer
     const [gen, setGen] = useState(0);
     const peerSetter = (stateDigit) => setGen(stateDigit);
@@ -23,7 +24,8 @@ export default function SetUpPeer () {
             OFFER: 'offer',
             ANSWER: 'answer',
             CANDIDATE: 'candidate'
-        }
+        },
+        name
     };
 
     return (
