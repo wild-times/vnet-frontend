@@ -29,8 +29,6 @@ export default function PeerShare (props) {
                 if (peerConnection.connectionState === 'connected') {
                     signal.close();
                     statusPeer.current.innerText = 'Connected to peer';
-                } else {
-                    statusPeer.current.innerText = `Peer: ${peerConnection.connectionState}`;
                 }
             });
 
@@ -86,6 +84,7 @@ export default function PeerShare (props) {
             <h2>Copy this code to your peer to host a connection</h2>
             <span>{randomCode}</span><br/>
             <span ref={status}>Not Connected to signalling server</span>
+            <br />
             <span ref={statusPeer} />
         </div>
     )

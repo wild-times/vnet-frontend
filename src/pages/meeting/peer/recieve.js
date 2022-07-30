@@ -9,10 +9,10 @@ export default function PeerReceive (props) {
     const connectEvent = (event_) => {
         event_.preventDefault();
         const f = new FormData(event_.target);
-        const signal = signalling(f.get('code'), status.current);
+        const sig = signalling(f.get('code'), status.current);
         [...event_.target].forEach((element) => element.disabled = true);
 
-        const makeConnectionReceive = async () => {
+        const makeConnectionReceive = async (signal) => {
             const peerConnection = new RTCPeerConnection();
 
             // close signalling server connection when connected
@@ -20,8 +20,6 @@ export default function PeerReceive (props) {
                 if (peerConnection.connectionState === 'connected') {
                     signal.close();
                     statusPeer.current.innerText = 'Connected to peer';
-                } else {
-                    statusPeer.current.innerText = peerConnection.connectionState;
                 }
             });
 
@@ -64,11 +62,11 @@ export default function PeerReceive (props) {
             });
         };
 
-        signal.onmessage = async (event_) => {
+        sig.onmessage = async (event_) => {
             const data = JSON.parse(event_.data);
 
             if (data['type'] === "signal_connected" && data['peers_count'] === 2) {
-                await makeConnectionReceive();
+                await makeConnectionReceive(sig);
             }
         };
     };
@@ -77,6 +75,7 @@ export default function PeerReceive (props) {
         <div>
             <span>Receive</span><br/>
             <span ref={status}>Not Connected to signalling server</span>
+            <br />
             <span ref={statusPeer} />
 
             <form onSubmit={connectEvent}>
