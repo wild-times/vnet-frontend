@@ -5,6 +5,7 @@ export default function PeerReceive (props) {
     const { signalling, name, signalTypes } = props;
     const status = useRef(null);
     const statusPeer = useRef(null);
+    const streamIds = [];
 
     const connectEvent = (event_) => {
         event_.preventDefault();
@@ -44,11 +45,13 @@ export default function PeerReceive (props) {
                 if (peerConnection.connectionState === 'connected') {
                     const channel = event_.channel;
 
-                    channel.addEventListener('open', () => signal.close());
-
                     channel.addEventListener('message', (channelEvent) => {
                         const channelMessage = JSON.parse(channelEvent.data);
-                        // do something with the message
+
+                        // save stream IDs
+                        if (channelMessage.type === 'stream_ids' && Array.isArray(channelMessage.streams)) {
+                            streamIds.splice(0, streamIds.length, ...channelMessage.streams)
+                        }
                     });
                 }
             });

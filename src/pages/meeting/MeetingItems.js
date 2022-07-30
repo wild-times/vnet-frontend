@@ -23,7 +23,7 @@ export function MeetingVideo (props) {
 
     return (
         <div className='video-stream' id={stream['id']}>
-            <div className='video-stream-home' id={stream['displayName']} ref={ref => ref? ref.appendChild(view.target): void 0} />
+            <div className='video-stream-home' id={name} ref={ref => ref? ref.appendChild(view.target): void 0} />
             <span>{finalName}</span>
         </div>
     )

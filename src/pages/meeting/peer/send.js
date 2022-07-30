@@ -7,16 +7,28 @@ export default function PeerShare (props) {
     const randomCode = Math.floor(Math.random() * (1000000 - 100000 + 1) + 100000);
 
     useEffect(() => {
+        const streamIds = [];
+
         // collect all streams
         function collectStreams () {
             const streamHomes = [...document.getElementsByClassName('video-stream-home')];
-            return streamHomes.filter((el) => {
+
+            // filter elements to ensure they are videos
+            const filteredStreamHomes = streamHomes.filter((el) => {
                 return [
                     el['firstElementChild'],
                     el['firstElementChild']['firstElementChild'],
                     el['firstElementChild']['firstElementChild'].nodeName === 'VIDEO'
                 ].every(Boolean)
-            }).map((el) => el['firstElementChild']['firstElementChild'].srcObject);
+            });
+
+            // save stream id and name
+            streamIds.splice(0, streamIds.length, ...filteredStreamHomes.map((el) => ({
+                name: el.id,
+                id: el['firstElementChild']['firstElementChild'].srcObject.id
+            })));
+
+            return filteredStreamHomes.map((el) => el['firstElementChild']['firstElementChild'].srcObject);
         }
 
         // make an RTCPeerConnection
@@ -36,9 +48,12 @@ export default function PeerShare (props) {
                     // create a data channel to send stream IDs to peer
                     const channel = peerConnection.createDataChannel('streams');
 
+                    // send stream ids once channel is open
                     channel.addEventListener('open', () => {
-                        signal.close();
-                        // send message here probably
+                        channel.send(JSON.stringify({
+                            type: 'stream_ids',
+                            streams: streamIds
+                        }));
                     });
                 }
             });
