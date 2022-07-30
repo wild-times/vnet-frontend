@@ -11,7 +11,11 @@ export default function PeerShare (props) {
         function collectStreams () {
             const streamHomes = [...document.getElementsByClassName('video-stream-home')];
             return streamHomes.filter((el) => {
-                return el['firstElementChild'] && el['firstElementChild']['firstElementChild'] && el['firstElementChild']['firstElementChild'].nodeName === 'VIDEO';
+                return [
+                    el['firstElementChild'],
+                    el['firstElementChild']['firstElementChild'],
+                    el['firstElementChild']['firstElementChild'].nodeName === 'VIDEO'
+                ].every(Boolean)
             }).map((el) => el['firstElementChild']['firstElementChild'].srcObject);
         }
 
