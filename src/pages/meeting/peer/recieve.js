@@ -18,7 +18,6 @@ export default function PeerReceive (props) {
             // close signalling server connection when connected
             peerConnection.addEventListener('connectionstatechange', () => {
                 if (peerConnection.connectionState === 'connected') {
-                    signal.close();
                     statusPeer.current.innerText = 'Connected to peer';
                 }
             });
@@ -38,6 +37,20 @@ export default function PeerReceive (props) {
             peerConnection.addEventListener('track', (event_) => {
                 // track to be added here
                 console.log(event_.streams);
+            });
+
+            // listen for data channel to receive info about the stream IDs
+            peerConnection.addEventListener('datachannel', (event_) => {
+                if (peerConnection.connectionState === 'connected') {
+                    const channel = event_.channel;
+
+                    channel.addEventListener('open', () => signal.close());
+
+                    channel.addEventListener('message', (channelEvent) => {
+                        const channelMessage = JSON.parse(channelEvent.data);
+                        // do something with the message
+                    });
+                }
             });
 
             // listen for messages

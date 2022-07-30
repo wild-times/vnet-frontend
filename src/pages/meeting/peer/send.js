@@ -31,8 +31,15 @@ export default function PeerShare (props) {
             // close signalling server connection when connected
             peerConnection.addEventListener('connectionstatechange', () => {
                 if (peerConnection.connectionState === 'connected') {
-                    signal.close();
                     statusPeer.current.innerText = 'Connected to peer';
+
+                    // create a data channel to send stream IDs to peer
+                    const channel = peerConnection.createDataChannel('streams');
+
+                    channel.addEventListener('open', () => {
+                        signal.close();
+                        // send message here probably
+                    });
                 }
             });
 
