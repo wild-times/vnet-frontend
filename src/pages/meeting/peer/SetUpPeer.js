@@ -10,6 +10,7 @@ export default function SetUpPeer (props) {
     const [gen, setGen] = useState(0);
     const peerSetter = (stateDigit) => setGen(stateDigit);
 
+    // noinspection JSUnusedGlobalSymbols
     const rtcOptions = {
         signalling: (code, statusDiv) => {
             const url = `ws://${window.location.hostname}:8000${reqData.signallingServer}${code}/`;
