@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 
 
-export default function LeftMeeting (props) {
+export default function LeftMeeting () {
     return (
         <div>
             <h2>You have left the meeting</h2>

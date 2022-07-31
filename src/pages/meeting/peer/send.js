@@ -24,7 +24,7 @@ export default function PeerShare (props) {
 
             // save stream id and name
             streamIds.splice(0, streamIds.length, ...filteredStreamHomes.map((el) => ({
-                name: el.id,
+                name: el['id'],
                 id: el['firstElementChild']['firstElementChild'].srcObject.getTracks()[0].id
             })));
 
@@ -91,7 +91,7 @@ export default function PeerShare (props) {
                     await peerConnection.setRemoteDescription(new RTCSessionDescription(message.description));
 
                 } else if (message.type === signalTypes.CANDIDATE) {
-                    await peerConnection.addIceCandidate(new RTCIceCandidate(message.candidates))
+                    await peerConnection.addIceCandidate(new RTCIceCandidate(message['candidates']))
                 }
             });
         };
