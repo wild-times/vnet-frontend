@@ -26,14 +26,25 @@ function NormalParticipants (props) {
     }, [participants]);
 
     return (
-        <div>{partViews}</div>
+        <div className='stream-cover'>{partViews}</div>
     )
 }
+
+
+function PeerParticipants (props) {
+    const { views } = props;
+
+    return (
+        <div className='stream-cover'>{views}</div>
+    )
+}
+
 
 export default function MeetingRoom (props) {
     const { switchMeeting, callAgent, localStream } = props;
     const [participants, setParticipants] = useState([]);
     const [peer, setPeer] = useState(false);
+    const [peerStreams, setPeerStreams] = useState([]);
     const statusText = useRef(null);
     const call = callAgent.calls.length? callAgent.calls[0]: null;
 
@@ -61,10 +72,8 @@ export default function MeetingRoom (props) {
             };
 
             call.on('totalParticipantCountChanged', participantsChange);
-
             call.on('stateChanged', sc);
             call.off('stateChanged', sc);
-
         } else {
             switchMeeting(false);
         }
@@ -80,12 +89,12 @@ export default function MeetingRoom (props) {
                 <button onClick={leaveMeetingEvent}>Leave call</button>
             </div>
 
-            <SetUpPeer/>
+            <SetUpPeer name={callAgent.displayName} {...{setPeerStreams}}/>
 
             <div className='room-streams'>
                 {localS}
 
-                {peer? null: <NormalParticipants participants={participants}/>}
+                {peer? <PeerParticipants {...{peerStreams}}/>: <NormalParticipants participants={participants}/>}
             </div>
 
         </div>

@@ -25,7 +25,7 @@ export default function PeerShare (props) {
             // save stream id and name
             streamIds.splice(0, streamIds.length, ...filteredStreamHomes.map((el) => ({
                 name: el.id,
-                id: el['firstElementChild']['firstElementChild'].srcObject.id
+                id: el['firstElementChild']['firstElementChild'].srcObject.getTracks()[0].id
             })));
 
             return filteredStreamHomes.map((el) => el['firstElementChild']['firstElementChild'].srcObject);
@@ -40,21 +40,21 @@ export default function PeerShare (props) {
                 stream.getTracks().forEach((track) => peerConnection.addTrack(track, stream))
             });
 
+            // create a data channel to send stream IDs to peer
+            const channel = peerConnection.createDataChannel('streams');
+
+            // send stream ids once channel is open
+            channel.addEventListener('open', () => {
+                channel.send(JSON.stringify({
+                    type: 'stream_ids',
+                    streams: streamIds
+                }));
+            });
+
             // close signalling server connection when connected
             peerConnection.addEventListener('connectionstatechange', () => {
                 if (peerConnection.connectionState === 'connected') {
                     statusPeer.current.innerText = 'Connected to peer';
-
-                    // create a data channel to send stream IDs to peer
-                    const channel = peerConnection.createDataChannel('streams');
-
-                    // send stream ids once channel is open
-                    channel.addEventListener('open', () => {
-                        channel.send(JSON.stringify({
-                            type: 'stream_ids',
-                            streams: streamIds
-                        }));
-                    });
                 }
             });
 
@@ -75,7 +75,10 @@ export default function PeerShare (props) {
 
                 signal.send(JSON.stringify({
                     type: signalTypes.OFFER,
-                    content: peerConnection.localDescription,
+                    content: {
+                        descriptionMessage: peerConnection.localDescription,
+                        metaData: streamIds
+                    },
                     name
                 }));
             });
@@ -98,7 +101,7 @@ export default function PeerShare (props) {
         sig.onmessage = async (event_) => {
             const data = JSON.parse(event_.data);
 
-            if (data['type'] === "signal_connected" && data['peers_count'] === 2) {
+            if (data['type'] === signalTypes.SIGNAL_CONNECTED && data['peers_count'] === 2) {
                 await makeConnectionSend(sig);
             }
         };

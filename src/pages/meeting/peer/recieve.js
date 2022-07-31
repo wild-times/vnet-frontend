@@ -2,7 +2,7 @@ import { useRef } from "react";
 
 
 export default function PeerReceive (props) {
-    const { signalling, name, signalTypes } = props;
+    const { signalling, name, signalTypes, setPeerStreams } = props;
     const status = useRef(null);
     const statusPeer = useRef(null);
     const streamIds = [];
@@ -16,10 +16,28 @@ export default function PeerReceive (props) {
         const makeConnectionReceive = async (signal) => {
             const peerConnection = new RTCPeerConnection();
 
-            // close signalling server connection when connected
+            const buildStreams = () => {
+                const tracks = peerConnection.getReceivers().map((receiver) => receiver.track);
+
+                const streams = tracks.map((track) => {
+                    const details = streamIds.find((rStream) => rStream.id === track.id);
+
+                    return details && details.name !== name? Object.assign(
+                        details,
+                        {
+                            mediaStream: new MediaStream([track])
+                        }
+                    ): null;
+
+                }).filter(Boolean);
+
+                setPeerStreams(streams);
+            };
+
             peerConnection.addEventListener('connectionstatechange', () => {
                 if (peerConnection.connectionState === 'connected') {
                     statusPeer.current.innerText = 'Connected to peer';
+                    buildStreams();
                 }
             });
 
@@ -32,12 +50,6 @@ export default function PeerReceive (props) {
                         name
                     }));
                 }
-            });
-
-            // add tracks when they come
-            peerConnection.addEventListener('track', (event_) => {
-                // track to be added here
-                console.log(event_.streams);
             });
 
             // listen for data channel to receive info about the stream IDs
@@ -62,8 +74,9 @@ export default function PeerReceive (props) {
 
                 if (message.type === signalTypes.OFFER) {
                     // set offer and return answer
-                    await peerConnection.setRemoteDescription(new RTCSessionDescription(message.description));
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(message.description.descriptionMessage));
                     await peerConnection.setLocalDescription(await peerConnection.createAnswer());
+                    streamIds.splice(0, streamIds.length, ...message.description.metaData);
 
                     signal.send(JSON.stringify({
                         type: signalTypes.ANSWER,
@@ -81,7 +94,7 @@ export default function PeerReceive (props) {
         sig.onmessage = async (event_) => {
             const data = JSON.parse(event_.data);
 
-            if (data['type'] === "signal_connected" && data['peers_count'] === 2) {
+            if (data['type'] === signalTypes.SIGNAL_CONNECTED && data['peers_count'] === 2) {
                 await makeConnectionReceive(sig);
             }
         };
