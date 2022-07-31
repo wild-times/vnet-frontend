@@ -34,7 +34,9 @@ export function MeetingPeerVideo (props) {
     const { stream, name } = props;
     const videoElement = useRef(null);
 
-    useEffect(() => videoElement.current.srcObject = stream);
+    useEffect(() => {
+        videoElement.current.srcObject = stream;
+    });
 
     return (
         <div className='peer-video-stream'>
