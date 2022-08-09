@@ -117,7 +117,7 @@ export default function Home (props) {
                 <form id="meeting-dash-join-form" onSubmit={joinFormSubmit}>
                     <div>
                         <label htmlFor="meeting-code-input">Enter meeting code</label>
-                        <input autoFocus="true" autoComplete="off" type="text" name="join-code" id="meeting-code-input" placeholder="Meeting code..." required />
+                        <input autoFocus={true} autoComplete="off" type="text" name="join-code" id="meeting-code-input" placeholder="Meeting code..." required />
                     </div>
 
                     <div id="submit-meeting-div">

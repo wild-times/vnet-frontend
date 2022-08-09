@@ -1,0 +1,83 @@
+.create-innerbox{
+    margin: auto;
+    width: 60%;
+    min-height: 80vh;
+    border-radius: 5em 5em 1em 1em;
+    background: white linear-gradient(rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+    opacity: 1;
+}
+
+.create-topbox {
+    padding-bottom: 1em;
+    text-align: center;
+    color: white;
+    background-position: center;
+    border: 1px solid darkcyan;
+    width: 100%;
+    height: 6em;
+    border-radius: 5em 5em 0 0;
+}
+
+.create-topbox > h1 {
+    font-size: 3em;
+}
+
+#create-meeting-form {
+    width: 90%;
+    margin: 1em auto auto;
+    font-size: 2em;
+}
+
+#create-meeting-form > div {
+    margin: 0.7em;
+}
+
+#create-meeting-form input[type=datetime-local] {
+    display: block !important;
+}
+
+.create-meeting-time {
+    display: flex;
+    flex-direction: row;
+}
+
+.create-meeting-time > div {
+    width: 50%;
+}
+
+#notes-input {
+    border: 2px solid darkcyan;
+    border-radius: 0.4em;
+    display: block;
+    width: 90%;
+    transition: 0.3s;
+    padding: 1.2em 2em;
+    box-sizing: border-box;
+}
+
+#notes-input:focus {
+    border: 2px solid #330033;
+}
+
+#notes-input::placeholder {
+    color: darkcyan;
+    font-size: 1.2em;
+}
+
+.form-btns {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.create-form-bt {
+    margin-left: 2em;
+    width: 20%;
+    height: 30%;
+    font-size: 0.7em;
+}
+
+input[type=datetime-local] {
+    border: 1px solid darkcyan;
+    border-radius: 0.2em;
+}

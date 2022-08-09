@@ -1,8 +1,11 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
 
 import { saveNewMeeting } from "../../utils/req";
 import { zeroPen } from '../../utils/misc';
+import reqData from '../../utils/wild';
+import '../style/CreateMeeting.css';
+
 
 export default function CreateMeeting (props) {
     const { token } = props;
@@ -49,35 +52,53 @@ export default function CreateMeeting (props) {
         }).catch(() => setError(true));
     };
 
+    if (error) {
+        return (
+            <div>
+                <h1 className='center-mix'>Error creating meeting, please refresh the page and try again</h1>
+            </div>
+        )
+    }
+
     return (
-        <div id='vnet-create-meeting'>
-            <h2>Schedule a new meeting</h2>
+        <div className="create-innerbox">
+            <div className="create-topbox" style={{backgroundImage: `url(${reqData.vnetBackgroundLarge})`}}>
+                <h1>Create Meeting</h1>
+            </div>
 
-            {error? <div><p>Error creating meeting, please refresh the page and try again</p></div>: void 0}
-
-            <form onSubmit={createMeetingHandler}>
+            <form id="create-meeting-form" onSubmit={createMeetingHandler}>
                 <div>
-                    <label htmlFor="title-input">Meeting Title</label>
-                    <input type="text" name='title' id='title-input' placeholder='Enter title here' required={true}/>
+                    <label htmlFor="meeting-title-input">Meeting title</label>
+                    <input autoFocus={true} required type="text" name="title" id="meeting-title-input" placeholder="Meeting discussion..." />
                 </div>
 
                 <div>
                     <label htmlFor="notes-input">Meeting notes</label>
-                    <textarea name="notes" id="notes-input" cols="30" rows="10" placeholder='Helpful notes about what the meeting is about' required={true}/>
+                    <textarea required name="notes" id="notes-input" cols="30" rows="5" placeholder="Some notes for what the meeting is about" />
                 </div>
 
-                <div>
-                    <label htmlFor="start_time-input">Start time</label>
-                    <input type="datetime-local" name='start_time' id='start_time-input' required={true}/>
+                <div className="create-meeting-time">
+                    <div>
+                        <label htmlFor="start-time-input">Choose a start time</label>
+                        <input type="datetime-local" required name="start_time" id="start-time-input" />
+                    </div>
+
+                    <div>
+                        <label htmlFor="end-time-input">Choose an end time</label>
+                        <input type="datetime-local" required name="end_time" id="end-time-input" />
+                    </div>
                 </div>
 
-                <div>
-                    <label htmlFor="start_time-input">End time</label>
-                    <input type="datetime-local" name='end_time' id='end_time-input' required={true}/>
+                <hr/>
+                <div className="form-btns">
+                    <div className="create-form-bt">
+                        <input type="submit" value="Create" className="wild-buttons" />
+                    </div>
+                    <div className="create-form-bt">
+                        <NavLink className="wild-buttons" to={'/'}>Cancel</NavLink>
+                    </div>
                 </div>
-
-                <input type="submit" value='Schedule meeting'/>
             </form>
         </div>
-    );
+    )
 }
