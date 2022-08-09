@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useQuery } from "react-query";
 import { fetchMeetings } from "../../utils/req";
+import LoadingScreen from "./LoadingScreen";
 
 // represents meetings already created, and lets you join immediately
 function ExistingMeeting (props) {
@@ -23,9 +24,9 @@ export default function Home (props) {
 
     // TODO: to be replaced with better pages for loading...etc
     if (status === 'loading') {
-        return <div>working on meetings</div>
+        return <LoadingScreen message='Getting your meetings' />
     } else if (status === 'error') {
-        return <div>An error occurred fetching meetings</div>
+        return <h2 className='center-mix'>An error occurred getting your meetings</h2>
     }
 
     // the real work begins
