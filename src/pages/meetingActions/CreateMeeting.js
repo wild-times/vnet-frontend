@@ -2,10 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { saveNewMeeting } from "../../utils/req";
-
-// add 0 to numbers below ten: 9 -> 09, 12 -> 12, assumes all numbers are positive
-const zeroPen = (num) => num < 10? `0${num.toString()}`: num.toString();
-
+import { zeroPen } from '../../utils/misc';
 
 export default function CreateMeeting (props) {
     const { token } = props;
