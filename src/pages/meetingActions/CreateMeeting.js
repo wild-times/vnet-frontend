@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate, NavLink } from 'react-router-dom';
 
 import { saveNewMeeting } from "../../utils/req";
@@ -6,11 +6,14 @@ import { zeroPen } from '../../utils/misc';
 import reqData from '../../utils/wild';
 import '../style/CreateMeeting.css';
 
+const MILLISECONDS_IN_A_MINUTE = 60000;
+
 
 export default function CreateMeeting (props) {
     const { token } = props;
     const navigate = useNavigate();
     const [error, setError] = useState(false);
+    const endTimeInput = useRef(null);
 
     // format a date for the backend
     const fDate = (dateS) => {
@@ -39,16 +42,21 @@ export default function CreateMeeting (props) {
     // when new meeting is schedules
     const createMeetingHandler = (event_) => {
         event_.preventDefault();
-        // get the data
         const f = new FormData(event_.target);
+        const joinNow = Boolean(f.get('join-now'));
         const meetingData = {};
         [...f.entries()].forEach(([key, entry]) => meetingData[key] = key.match(/time/g)? fDate(entry): entry);
         [...event_.target].forEach((el) => el.disabled = true);
 
+        const handleMeetingRedirection = (meetingDetails) => {
+            const _meetingId = meetingDetails['meetingId'];
+            const navUrl = joinNow? `/conf/${_meetingId}/`: `/?show=${_meetingId}`;
+            navigate(navUrl);
+        };
+
         // save data to the backend
         saveNewMeeting(meetingData, token).then((data) => {
-            const _id = data['meetingId'];
-            _id? navigate(`/conf/${_id}/`): setError(true);
+            data['meetingId']? handleMeetingRedirection(data): setError(true);
         }).catch(() => setError(true));
     };
 
@@ -59,6 +67,18 @@ export default function CreateMeeting (props) {
             </div>
         )
     }
+
+    const stampCalc = (obj) => {
+        return `${obj.getFullYear()}-${zeroPen(obj.getMonth()+1)}-${zeroPen(obj.getDate())}T${zeroPen(obj.getHours())}:${zeroPen(obj.getMinutes())}`;
+    };
+
+    const maxUpdate = (event_) => {
+        const stamp = event_.target.value;
+        const nmind = new Date(new Date(stamp).getTime() + (MILLISECONDS_IN_A_MINUTE * 10));
+        const nmaxd = new Date(new Date(stamp).getTime() + (MILLISECONDS_IN_A_MINUTE * 45));
+        endTimeInput.current.min = stampCalc(nmind);
+        endTimeInput.current.max = stampCalc(nmaxd);
+    };
 
     return (
         <div className="create-innerbox">
@@ -80,13 +100,18 @@ export default function CreateMeeting (props) {
                 <div className="create-meeting-time">
                     <div>
                         <label htmlFor="start-time-input">Choose a start time</label>
-                        <input type="datetime-local" required name="start_time" id="start-time-input" />
+                        <input onChange={maxUpdate} min={stampCalc(new Date())} type="datetime-local" required name="start_time" id="start-time-input" />
                     </div>
 
                     <div>
                         <label htmlFor="end-time-input">Choose an end time</label>
-                        <input type="datetime-local" required name="end_time" id="end-time-input" />
+                        <input min={stampCalc(new Date())} ref={endTimeInput} type="datetime-local" required name="end_time" id="end-time-input" />
                     </div>
+                </div>
+
+                <div>
+                    <label htmlFor="join-now-check">Join Meeting now</label>
+                    <input id='join-now-check' type="checkbox" name='join-now'/>
                 </div>
 
                 <hr/>

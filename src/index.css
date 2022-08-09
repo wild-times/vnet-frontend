@@ -98,6 +98,14 @@ input[type="datetime-local"]:focus {
     -moz-box-shadow: none;
 }
 
+input[type="datetime-local"]:invalid {
+    color: #f8ffff;
+    background-color: #5d0009;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+}
+
 select {
     border: 2px solid darkcyan;
     border-radius: 0.4em;
