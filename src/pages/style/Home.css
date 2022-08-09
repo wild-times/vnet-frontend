@@ -1,0 +1,124 @@
+.meeting-dash {
+    width: 95%;
+    min-height: 80vh;
+    margin: auto;
+    background: #f1f1f1;
+    border-radius: 0.5em;
+    display: flex;
+    flex-direction: row;
+}
+
+.meeting-dash > div {
+    min-height: 80vh;
+}
+
+.meeting-dash-scheduled {
+    width: 60%;
+    border-right: 1px solid darkcyan;
+}
+
+.meeting-dash-join {
+    width: 40%;
+}
+
+.meeting-dash-headings {
+    text-align: center;
+    font-size: 3em;
+}
+
+.meeting-dash-meetings {
+    width: 95%;
+    margin: auto auto 2em;
+}
+
+.meeting-dash-meeting {
+    background: #fcfcfc;
+    height: 7em;
+    display: flex;
+    flex-direction: row;
+    box-shadow: 0 0.2em 0.5em 0 rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    margin-bottom: 0.5em;
+    overflow: hidden;
+}
+
+.meeting-dash-meeting:hover {
+    box-shadow: 0 0.4em 1em 0 rgba(0, 0, 0, 0.2);
+}
+
+.meeting-dash-meeting-items {
+    height: 100%;
+    overflow: hidden;
+}
+
+.meeting-dash-meeting-title {
+    width: 40%;
+    padding: 0.5em 0 0 0.5em;
+    font-size: 1.3em;
+    border-right: 1px solid darkcyan;
+}
+
+.meeting-dash-meeting-time {
+    width: 25%;
+    border-right: 1px solid darkcyan;
+    font-size: 1.4em;
+    text-align: center;
+    line-height: 2em;
+    font-weight: bold;
+}
+
+.meeting-dash-meeting-actions {
+    width: 35%;
+    display: flex;
+    flex-direction: row;
+}
+
+.meeting-dash-meeting-actions > div {
+    padding: 1em 0 0 0.5em;
+    width: 40%;
+    height: 100%;
+}
+
+.meeting-dash-meeting-actions > div > .wild-buttons {
+    background: #E5E1E1;
+    color: #330033;
+    transition: 0.3s;
+}
+
+.meeting-dash-meeting-actions > div > .wild-buttons:hover {
+    color: #E5E1E1;
+    background: #330033;
+}
+
+#meeting-dash-join-form {
+    width: 95%;
+    font-size: 1.5em;
+    margin: auto auto 5em;
+}
+
+#meeting-dash-join-form > div {
+    width: 90%;
+    margin: auto;
+    font-size: 1.3em;
+}
+
+#submit-meeting-div {
+    font-size: 0.7em !important;
+    width: 30% !important;
+    margin: 1em 0 0 2em !important;
+}
+
+#create-meeting {
+    width: 90%;
+    margin: auto;
+}
+
+#create-meeting > .bt {
+    margin: 3em auto auto;
+    width: 30%;
+}
+
+.meeting-dash-meeting-details {
+    width: 50%;
+    font-size: 1.4em;
+}
