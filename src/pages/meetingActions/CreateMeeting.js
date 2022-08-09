@@ -6,8 +6,8 @@ import { zeroPen } from '../../utils/misc';
 import reqData from '../../utils/wild';
 import '../style/CreateMeeting.css';
 
-const MILLISECONDS_IN_A_MINUTE = 60000;
 
+const MILLISECONDS_IN_A_MINUTE = 60000;
 
 export default function CreateMeeting (props) {
     const { token } = props;
@@ -74,10 +74,10 @@ export default function CreateMeeting (props) {
 
     const maxUpdate = (event_) => {
         const stamp = event_.target.value;
-        const nmind = new Date(new Date(stamp).getTime() + (MILLISECONDS_IN_A_MINUTE * 10));
-        const nmaxd = new Date(new Date(stamp).getTime() + (MILLISECONDS_IN_A_MINUTE * 45));
-        endTimeInput.current.min = stampCalc(nmind);
-        endTimeInput.current.max = stampCalc(nmaxd);
+        const newMinDate = new Date(new Date(stamp).getTime() + (MILLISECONDS_IN_A_MINUTE * 10));
+        const newMaxDate = new Date(new Date(stamp).getTime() + (MILLISECONDS_IN_A_MINUTE * 45));
+        endTimeInput.current.min = stampCalc(newMinDate);
+        endTimeInput.current.max = stampCalc(newMaxDate);
     };
 
     return (
