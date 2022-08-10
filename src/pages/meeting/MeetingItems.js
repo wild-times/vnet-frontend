@@ -9,13 +9,16 @@ export function MeetingVideo (props) {
     const [view, setView] = useState(null);
 
     useEffect(() => {
-        let render;
         if (stream) {
-            render = new VideoStreamRenderer(stream);
+            const render = new VideoStreamRenderer(stream);
             render.createView().then((el) => setView(el));
-        }
 
-        return () => render && render.dispose? render.dispose(): void 0;
+            return () => {
+                if (render && render.dispose){
+                    render.dispose();
+                }
+            }
+        }
     }, [stream]);
 
     if (!view) {

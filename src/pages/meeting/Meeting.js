@@ -5,7 +5,7 @@ import { AzureCommunicationTokenCredential } from '@azure/communication-common';
 import { CallClient } from '@azure/communication-calling';
 
 import MeetingRoom from './MeetingRoom';
-import SetUp from './SetUpMeeting';
+import SetupMeeting from './SetUpMeeting';
 import LeftMeeting from "./AfterMeeting";
 import LoadingScreen from "../home/LoadingScreen";
 import { fetchMeeting, getUserDetails } from "../../utils/req";
@@ -79,7 +79,7 @@ function MeetingLite (props) {
             };
 
             if (inMeeting === 1) {
-                comp = <SetUp {...dep}/>
+                comp = <SetupMeeting {...dep}/>
             } else if (inMeeting === 2) {
                 comp = <MeetingRoom {...dep} />
             } else if (inMeeting === 3) {

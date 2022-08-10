@@ -50,7 +50,7 @@ function TempApp (props) {
 }
 
 
-function App () {
+export default function App () {
     /* Handle user authentication in development */
     const [token, setToken] = useState(null);
 
@@ -85,4 +85,3 @@ function App () {
         </div>
     )
 }
-export default App;
