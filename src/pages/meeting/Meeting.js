@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 import { useQuery } from "react-query";
 import { AzureCommunicationTokenCredential } from '@azure/communication-common';
 import { CallClient } from '@azure/communication-calling';
@@ -7,6 +7,7 @@ import { CallClient } from '@azure/communication-calling';
 import MeetingRoom from './MeetingRoom';
 import SetUp from './SetUpMeeting';
 import LeftMeeting from "./AfterMeeting";
+import LoadingScreen from "../home/LoadingScreen";
 import { fetchMeeting, getUserDetails } from "../../utils/req";
 
 
@@ -63,7 +64,7 @@ function MeetingLite (props) {
     }, [meeting, user]);
 
     const toShow = (() => {
-        let comp = <div>Setting up</div>;
+        let comp = <LoadingScreen message={`Preparing to set up ${meeting['title']}`} />;
 
         if (tokenCredential && callClient && callAgent && deviceManager && devicePermissions.audio && devicePermissions.video) {
             const dep = {
@@ -108,20 +109,29 @@ export default function Meeting (props) {
         refetchOnWindowFocus: false
     });
 
-    // TODO: to be replaced with better pages for loading...etc
     if (status === 'loading') {
-        return <div>working on meeting</div>
+        return <LoadingScreen message='Getting meeting details'/>
     } else if (status === 'error') {
-        return <div>An error occurred while fetching meeting</div>
-    }
+        return (
+            <div className="center-mix">
+                <h1>Could not load meeting details for "{meetingCode}"</h1>
+                <NavLink style={{width: '5em', margin: 'auto'}} to='/' className="wild-buttons">Home</NavLink>
+            </div>
+        )
 
+    }
     const meetingNotFound = (() => meetingData && meetingData.hasOwnProperty('message') && meetingData.message === 'Meeting not found')();
 
     return (
         <div id="vnet-meeting">
-            <h2>Welcome to VNET meeting</h2>
-
-            {meetingNotFound? <h3>Could not find the meeting with code "{meetingCode}"</h3>: <MeetingLite meeting={meetingData} user={userData}/>}
+            {
+                meetingNotFound? (
+                    <div className="center-mix">
+                        <h1>Could not find the meeting with code "{meetingCode}"</h1>
+                        <NavLink style={{width: '5em', margin: 'auto'}} to='/' className="wild-buttons">Home</NavLink>
+                    </div>
+                ): <MeetingLite meeting={meetingData} user={userData}/>
+            }
         </div>
     )
 }
