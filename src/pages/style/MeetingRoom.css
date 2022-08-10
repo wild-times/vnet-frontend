@@ -1,0 +1,125 @@
+.meeting_page_main {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+}
+
+.meeting_space {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+}
+
+.meeting-details {
+    width: 20%;
+    background: #040634;
+    color: white;
+    font-size: 1.4em;
+}
+
+.meeting-details-content {
+    margin: 1em 1em 0 1em;
+}
+
+.meeting-details-content > hr {
+    margin-top: 2em;
+    margin-bottom: 2em;
+}
+
+.people_div {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    min-height: 100%;
+    width: 100%;
+}
+
+.person_space {
+    height: 23.6em;
+    width: 35em;
+    border: 1px solid transparent;
+    background-color: #432943;
+    border-radius: 0.2em;
+    margin: 0 0.5em;
+}
+
+.meeting_actions {
+    height: 8em;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 0 1.5em;
+    background-color: #040634;
+    color: white;
+}
+
+.meeting_actions span {
+    font-size: 1.4em;
+}
+
+.meeting_code.hidden {
+    opacity: 0;
+}
+
+.meeting_actions_options {
+    width: fit-content;
+    flex: 0.35;
+    margin-right: 2em;
+    height: 90%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.meeting_actions_btn {
+    margin-left: 1em;
+    width: 12em;
+    height: 80%;
+    padding: 1em 2.5em;
+    text-align: center;
+    font-size: 1.4em;
+    font-weight: 600;
+    color: whitesmoke;
+    background-color: rgb(218, 2, 2);
+    border: 1px solid transparent;
+    border-radius: 0.5em;
+    cursor: pointer;
+}
+
+.meeting_actions_btn:hover {
+    background-color: rgb(250, 39, 39);
+}
+
+.meeting_actions_btn:active {
+    background-color: rgb(233, 1, 1);
+}
+
+.peer-modal {
+    font-size: 1.5em;
+    width: 50em;
+    background-color: #5A035A;
+}
+
+.code-peer {
+    width: 60%;
+    margin-bottom: 1em;
+}
+
+.code-peer-submit {
+    width: 7em;
+}
+
+.code-peer-submit > input {
+    font-size: 1em;
+    background-color: #769699;
+    color: #040634;
+}
+
+.code-peer-submit > input:hover {
+    background-color: #58595a;
+    color: whitesmoke;
+}

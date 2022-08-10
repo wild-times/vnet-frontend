@@ -2,7 +2,7 @@ import { useRef } from "react";
 
 
 export default function PeerReceive (props) {
-    const { signalling, name, signalTypes, setPeerStreams } = props;
+    const { signalling, name, signalTypes, setPeerStreams, receiveModal } = props;
     const status = useRef(null);
     const statusPeer = useRef(null);
     const streamIds = [];
@@ -100,21 +100,33 @@ export default function PeerReceive (props) {
         };
     };
 
+    const closeReceiveModal = () => {
+        receiveModal.current.style.display = '';
+    };
+
     return (
-        <div>
-            <span>Receive</span><br/>
-            <span ref={status}>Not Connected to signalling server</span>
-            <br />
-            <span ref={statusPeer} />
-
-            <form onSubmit={connectEvent}>
-                <div>
-                    <label htmlFor="codeCon">Peer code</label>
-                    <input type="number" name="code" id="codeCon" required={true}/>
+        <div className="vnet-modal" id="receive-peer" ref={receiveModal}>
+            <div className="vnet-modal-content peer-modal">
+                <div className="vnet-modal-header">
+                    <span onClick={closeReceiveModal} className="vnet-modal-close">&times;</span>
+                    <h2>Receive from peer</h2>
                 </div>
-
-                <input type="submit" value="connect"/>
-            </form>
+                <div className="vnet-modal-body">
+                    <p>Enter the code from the peer you wish to connect to</p>
+                    <form onSubmit={connectEvent}>
+                        <div className="code-peer">
+                            <label htmlFor="code-input">Code</label>
+                            <input required={true} type="number" name="code" id="code-input" placeholder="Enter code from peer"/>
+                        </div>
+                        <div className="code-peer-submit">
+                            <input type="submit" value="Connect" className="wild-buttons"/>
+                        </div>
+                    </form>
+                </div>
+                <div className="vnet-modal-footer">
+                    <h3><span ref={status}>Not connected to signalling server</span> • <span ref={statusPeer}>Not connected to peer</span></h3>
+                </div>
+            </div>
         </div>
     )
 }

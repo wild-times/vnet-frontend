@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef } from 'react';
 import PeerReceive from './recieve';
 import PeerShare from './send';
 import reqData from '../../../utils/wild';
@@ -6,9 +6,8 @@ import reqData from '../../../utils/wild';
 
 export default function SetUpPeer (props) {
     const { name, setPeerStreams } = props;
-    // gen state means what state of a WebRTC connection this is; 0 = no connection, 1 = host peer, 2 = receiving peer
-    const [gen, setGen] = useState(0);
-    const peerSetter = (stateDigit) => setGen(stateDigit);
+    const shareModal = useRef(null);
+    const receiveModal = useRef(null);
 
     // noinspection JSUnusedGlobalSymbols
     const rtcOptions = {
@@ -26,21 +25,25 @@ export default function SetUpPeer (props) {
             ANSWER: 'answer',
             CANDIDATE: 'candidate'
         },
-        name
+        name,
+        shareModal,
+        receiveModal
+    };
+
+    const openShareModal = () => {
+        shareModal.current.style.display = 'block';
+    };
+
+    const openReceiveModal = () => {
+        receiveModal.current.style.display = 'block';
     };
 
     return (
-        <div>
-            <h2>Set up a peer connection to share or receive feed from a peer on your network</h2>
-
-            {gen === 0?
-                <div>
-                    <button onClick={() => peerSetter(1)}>Share</button>
-                    <button onClick={() => peerSetter(2)}>Receive</button>
-                </div>: null
-            }
-
-            {gen === 1? <PeerShare {...rtcOptions} />: gen === 2?<PeerReceive {...rtcOptions} {...{setPeerStreams}}/>: null}
-        </div>
+        <>
+            <button onClick={openShareModal} className="meeting_actions_btn">Share with peer</button>
+            <button onClick={openReceiveModal} className="meeting_actions_btn">Receive from peer</button>
+            <PeerShare {...rtcOptions} />
+            <PeerReceive {...rtcOptions} {...{setPeerStreams}}/>
+        </>
     )
 }

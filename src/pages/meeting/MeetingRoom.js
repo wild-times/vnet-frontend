@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { MeetingVideo, MeetingPeerVideo } from "./MeetingItems";
 import SetUpPeer from "./peer/SetUpPeer";
+import '../style/MeetingRoom.css';
 
 
 function NormalParticipants (props) {
@@ -49,7 +50,7 @@ function PeerParticipants (props) {
 
 
 export default function MeetingRoom (props) {
-    const { switchMeeting, callAgent, localStream } = props;
+    const { switchMeeting, callAgent, localStream, meeting, host } = props;
     const [participants, setParticipants] = useState([]);
     const [peerStreams, setPeerStreams] = useState([]);
     const statusText = useRef(null);
@@ -60,6 +61,9 @@ export default function MeetingRoom (props) {
     };
 
     useEffect(() => {
+        const navs = [...document.getElementsByClassName('navbar')];
+        navs.forEach((nav) => nav.style.display = 'none');
+
         if (call) {
             statusText.current.innerText = call.state;
 
@@ -84,26 +88,79 @@ export default function MeetingRoom (props) {
         } else {
             switchMeeting(false);
         }
+
+        return () => {
+            navs.forEach((nav) => nav.style.display = '');
+        };
     }, [call, localStream]);
 
     const localS = <MeetingVideo you={true} name={callAgent.displayName} stream={localStream}/>;
 
+    // return (
+    //     <div id="meeting-room">
+    //         <h2>Meeting Room</h2>
+    //         <div>
+    //             <span ref={statusText} />
+    //             <button onClick={leaveMeetingEvent}>Leave call</button>
+    //         </div>
+    //
+    //         <SetUpPeer name={callAgent.displayName} {...{setPeerStreams}}/>
+    //
+    //         <div className='room-streams'>
+    //             {localS}
+    //
+    //             {peerStreams.length? <PeerParticipants {...{peerStreams}}/>: <NormalParticipants participants={participants}/>}
+    //         </div>
+    //
+    //     </div>
+    // )
+    const getHostDisplayName = () => {
+        const meetingHost = meeting['host'];
+        let name = meetingHost['username'];
+        if (meetingHost['meetingName']) {
+            name = meetingHost['meetingName'];
+        } else if (meetingHost['firstName'] && meetingHost['lastName']) {
+            name = `${meetingHost['firstName']} ${meetingHost['lastName']}`
+        }
+        return host? `${name} (you)`: name;
+    };
+
     return (
-        <div id="meeting-room">
-            <h2>Meeting Room</h2>
-            <div>
-                <span ref={statusText} />
-                <button onClick={leaveMeetingEvent}>Leave call</button>
+        <div className="meeting_page_main">
+            <div className="meeting_space">
+                <div className="meeting-details">
+                    <div className="meeting-details-content">
+                        <h2>{meeting.title}</h2>
+                        <hr />
+                        <p>{meeting['notes']}</p>
+                        <hr />
+                        <span>Code: {meeting['meetingId']}-</span>
+                        <hr />
+                        <span>Host: {getHostDisplayName()}</span>
+                        <hr />
+                        <span>Participants: {call['totalParticipantCount']}</span>
+                        <hr />
+                        <span ref={statusText} />
+                        <hr />
+                    </div>
+                </div>
+
+                <div className="people_div">
+                    {/*<div className="person_space"></div>*/}
+                    {/*<div className="person_space"></div>*/}
+                    {/*<div className="person_space"></div>*/}
+                    {/*<div className="person_space"></div>*/}
+                    {/*<div className="person_space"></div>*/}
+                    {/*<div className="person_space"></div>*/}
+                </div>
             </div>
 
-            <SetUpPeer name={callAgent.displayName} {...{setPeerStreams}}/>
-
-            <div className='room-streams'>
-                {localS}
-
-                {peerStreams.length? <PeerParticipants {...{peerStreams}}/>: <NormalParticipants participants={participants}/>}
-            </div>
-
+            <section className="meeting_actions">
+                <div className="meeting_actions_options">
+                    <SetUpPeer name={callAgent.displayName} {...{setPeerStreams}}/>
+                    <button onClick={leaveMeetingEvent} className="meeting_actions_btn">Leave Call</button>
+                </div>
+            </section>
         </div>
     )
 }
