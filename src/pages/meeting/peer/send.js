@@ -6,6 +6,10 @@ export default function PeerShare (props) {
     const status = useRef(null);
     const statusPeer = useRef(null);
 
+    const closeShareModal = () => {
+        shareModal.current.style.display = '';
+    };
+
     const initSharing = () => {
         const streamIds = [];
 
@@ -55,6 +59,7 @@ export default function PeerShare (props) {
             peerConnection.addEventListener('connectionstatechange', () => {
                 if (peerConnection.connectionState === 'connected') {
                     statusPeer.current.innerText = 'Connected to peer';
+                    closeShareModal();
                 }
             });
 
@@ -105,11 +110,6 @@ export default function PeerShare (props) {
                 await makeConnectionSend(sig);
             }
         };
-
-    };
-
-    const closeShareModal = () => {
-        shareModal.current.style.display = '';
     };
 
     const startSharing = () => setRandomCode(Math.floor(Math.random() * (1000000 - 100000 + 1) + 100000));

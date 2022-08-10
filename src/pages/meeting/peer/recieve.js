@@ -7,6 +7,10 @@ export default function PeerReceive (props) {
     const statusPeer = useRef(null);
     const streamIds = [];
 
+    const closeReceiveModal = () => {
+        receiveModal.current.style.display = '';
+    };
+
     const connectEvent = (event_) => {
         event_.preventDefault();
         const f = new FormData(event_.target);
@@ -37,6 +41,7 @@ export default function PeerReceive (props) {
             peerConnection.addEventListener('connectionstatechange', () => {
                 if (peerConnection.connectionState === 'connected') {
                     statusPeer.current.innerText = 'Connected to peer';
+                    closeReceiveModal();
                     buildStreams();
                 }
             });
@@ -98,10 +103,6 @@ export default function PeerReceive (props) {
                 await makeConnectionReceive(sig);
             }
         };
-    };
-
-    const closeReceiveModal = () => {
-        receiveModal.current.style.display = '';
     };
 
     return (
