@@ -54,7 +54,7 @@ export function MeetingPeerVideo (props) {
                     <video autoPlay={true} ref={videoElement}/>
                 </div>
             </div>
-            <span>{name}</span>
+            <p className="stream-name">{name}</p>
         </div>
     )
 }
