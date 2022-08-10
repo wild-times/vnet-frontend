@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { LocalVideoStream } from '@azure/communication-calling';
-import {NavLink} from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { MeetingVideo } from './MeetingItems';
 import '../style/SetUpRoom.css';
 
@@ -8,7 +8,6 @@ import '../style/SetUpRoom.css';
 function DeviceOption ({ name, index }) {
     return <option value={index}>{name}</option>
 }
-
 
 export default function SetupMeeting (props) {
     const { switchMeeting, meeting, callAgent, deviceManager, setLocalStream, localStream } = props;
@@ -120,6 +119,5 @@ export default function SetupMeeting (props) {
                 </div>
             </div>
         </div>
-
     )
 }

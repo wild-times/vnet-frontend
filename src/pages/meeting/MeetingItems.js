@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { VideoStreamRenderer } from '@azure/communication-calling';
+import SmallLoader from '../home/SmallLoadingScreen';
 
 
 export function MeetingVideo (props) {
@@ -18,7 +19,11 @@ export function MeetingVideo (props) {
     }, [stream]);
 
     if (!view) {
-        return <div>Loading preview...</div>
+        return (
+            <div className='video_box video_box_loading'>
+                <SmallLoader />
+            </div>
+        )
     }
 
     return (

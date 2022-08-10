@@ -32,6 +32,11 @@
     border: 0.3em solid #432943;
 }
 
+.video_box_loading {
+    display: flex;
+    align-items: center;
+}
+
 .stream-name {
     position: absolute;
     font-size: 1.7em;
