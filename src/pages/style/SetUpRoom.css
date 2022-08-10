@@ -1,0 +1,90 @@
+.main-setup {
+    width: 90vw;
+    height: 80vh;
+    margin: auto;
+}
+
+.main-setup > h1 {
+    text-align: center;
+    font-size: 3em;
+    height: 5%;
+}
+
+.set-up {
+    display: flex;
+    height: 87.5%;
+}
+
+.camera_check {
+    width: 50%;
+    align-items: center;
+    padding-left: 0.6em;
+}
+
+.video_box {
+    height: 65%;
+    border-radius: 0.5em;
+    width: 80%;
+    background-color: #432943;
+    margin: 0.5em auto 2em;
+    position: relative;
+    overflow: hidden;
+    border: 0.3em solid #432943;
+}
+
+.stream-name {
+    position: absolute;
+    font-size: 1.7em;
+    height: 8%;
+    width: 100%;
+    color: azure;
+    background-color: grey;
+    bottom: -1em;
+    padding-left: 2em;
+}
+
+.video-stream-home {
+    height: 92%;
+}
+
+.user_ready {
+    width: 50%;
+}
+
+.setup-devices {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.setup-devices > div {
+    width: 50%;
+    font-size: 2em;
+}
+
+.user_ready_details {
+    width: 95%;
+    margin: auto;
+}
+
+.user_ready_details > h1 {
+    font-size: 3em;
+    text-align: center;
+}
+
+.alert {
+    font-size: 1.4em;
+    width: 80%;
+    margin: auto auto 1em;
+}
+
+.setup-buttons-div {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.setup-buttons-div > div {
+    width: 30%;
+    margin: auto;
+}

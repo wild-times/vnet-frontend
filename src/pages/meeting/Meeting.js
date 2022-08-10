@@ -13,8 +13,7 @@ import { fetchMeeting, getUserDetails } from "../../utils/req";
 
 function MeetingLite (props) {
     const { user, meeting } = props;
-    // choices are 1, 2, 3: 1 = set up, 2 = meeting room/in meeting, 3 = left meeting.
-    const [inMeeting, inMeetingSwitch] = useState(1);
+    const [inMeeting, inMeetingSwitch] = useState(1); // choices are 1, 2, 3: 1 = set up, 2 = meeting room/in meeting, 3 = left meeting.
     const [tokenCredential, setTokenCredential] = useState(null);
     const [callClient, setCallClient] = useState(null);
     const [callAgent, setCallAgent] = useState(null);

@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { LocalVideoStream } from '@azure/communication-calling';
-
+import {NavLink} from "react-router-dom";
 import { MeetingVideo } from './MeetingItems';
+import '../style/SetUpRoom.css';
 
 
 function DeviceOption ({ name, index }) {
@@ -63,7 +64,7 @@ export default function SetupMeeting (props) {
     }, [deviceManager, setLocalStream]);
 
     useEffect(() => {
-        if (cameras.length && mics.length) {
+        if (cameras.length && mics.length && joinButton.current) {
             joinButton.current.disabled = false;
             joinButton.current.addEventListener('click', joinCallEventHandler);
             joinText.current.style.display = 'block';
@@ -79,25 +80,46 @@ export default function SetupMeeting (props) {
     };
 
     return (
-        <div id='meeting-setup'>
-            <h2>Set up meeting</h2>
+        <div className="main-setup">
+            <h1>Set up to join: {meeting.title}</h1>
+            <div className="set-up">
+                <div className="camera_check">
+                    <MeetingVideo name={callAgent.displayName} you={true} stream={localStream}/>
+                    <hr />
 
-            <div id='local-stream-preview'>
-                <MeetingVideo name={callAgent.displayName} you={true} stream={localStream}/>
+                    <div className="setup-devices">
+                        <div>
+                            <label htmlFor="cameras">Select camera</label>
+                            <select onChange={switchCamera} id="cameras">{cameraOptions}</select>
+                        </div>
+
+                        <div>
+                            <label htmlFor="mics">Select microphone</label>
+                            <select onChange={switchMic} id="mics">{micOptions}</select>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="user_ready">
+                    <div className="user_ready_details">
+                        <h1 ref={joinText} style={{display: 'none'}}>Ready To Join</h1>
+                        <h2 className='center-mix'>{meeting['meetingId']}</h2>
+                        <div className="alert">
+                            <p>{meeting['notes']}</p>
+                        </div>
+
+                        <div className="setup-buttons-div">
+                            <div>
+                                <button ref={joinButton} disabled={true} className="wild-buttons">Proceed to Meeting</button>
+                            </div>
+                            <div>
+                                <NavLink className="wild-buttons" to='/'>Cancel</NavLink>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <div id='choose-devices'>
-                <form>
-                    <select onChange={switchCamera}>{cameraOptions}</select>
-                    <select onChange={switchMic}>{micOptions}</select>
-                </form>
-            </div>
-
-            <div className='join-call-options'>
-                <span ref={joinText} style={{display: 'none'}}>Waiting to join</span>
-                <button ref={joinButton} disabled={true}>Join call</button>
-            </div>
-
         </div>
+
     )
 }
