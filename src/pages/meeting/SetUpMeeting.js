@@ -83,7 +83,7 @@ export default function SetupMeeting (props) {
             <h1>Set up to join: {meeting.title}</h1>
             <div className="set-up">
                 <div className="camera_check">
-                    <MeetingVideo name={callAgent.displayName} you={true} stream={localStream}/>
+                    <MeetingVideo apprName={'video_box'} name={callAgent.displayName} you={true} stream={localStream}/>
                     <hr />
 
                     <div className="setup-devices">

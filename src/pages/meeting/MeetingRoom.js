@@ -17,7 +17,7 @@ function NormalParticipants (props) {
                 const name = part.displayName;
                 const id_ = part.identifier;
 
-                parts.push(<MeetingVideo key={id_} you={false} name={name} stream={rstream}/>)
+                parts.push(<MeetingVideo apprName={'person_space'} key={id_} you={false} name={name} stream={rstream}/>)
             }
 
             return parts;
@@ -26,9 +26,7 @@ function NormalParticipants (props) {
         loadParts().then((p) => setPartViews(p));
     }, [participants]);
 
-    return (
-        <div className='stream-cover'>{partViews}</div>
-    )
+    return <>{partViews}</>;
 }
 
 
@@ -43,9 +41,7 @@ function PeerParticipants (props) {
         return <MeetingPeerVideo key={peerStream.id} {...componentArgs} />
     });
 
-    return (
-        <div className='stream-cover'>{views}</div>
-    )
+    return <>{views}</>;
 }
 
 
@@ -94,26 +90,8 @@ export default function MeetingRoom (props) {
         };
     }, [call, localStream]);
 
-    const localS = <MeetingVideo you={true} name={callAgent.displayName} stream={localStream}/>;
+    const localS = <MeetingVideo apprName={'person_space'} you={true} name={callAgent.displayName} stream={localStream}/>;
 
-    // return (
-    //     <div id="meeting-room">
-    //         <h2>Meeting Room</h2>
-    //         <div>
-    //             <span ref={statusText} />
-    //             <button onClick={leaveMeetingEvent}>Leave call</button>
-    //         </div>
-    //
-    //         <SetUpPeer name={callAgent.displayName} {...{setPeerStreams}}/>
-    //
-    //         <div className='room-streams'>
-    //             {localS}
-    //
-    //             {peerStreams.length? <PeerParticipants {...{peerStreams}}/>: <NormalParticipants participants={participants}/>}
-    //         </div>
-    //
-    //     </div>
-    // )
     const getHostDisplayName = () => {
         const meetingHost = meeting['host'];
         let name = meetingHost['username'];
@@ -134,7 +112,7 @@ export default function MeetingRoom (props) {
                         <hr />
                         <p>{meeting['notes']}</p>
                         <hr />
-                        <span>Code: {meeting['meetingId']}-</span>
+                        <span>Code: {meeting['meetingId']}</span>
                         <hr />
                         <span>Host: {getHostDisplayName()}</span>
                         <hr />
@@ -146,12 +124,8 @@ export default function MeetingRoom (props) {
                 </div>
 
                 <div className="people_div">
-                    {/*<div className="person_space"></div>*/}
-                    {/*<div className="person_space"></div>*/}
-                    {/*<div className="person_space"></div>*/}
-                    {/*<div className="person_space"></div>*/}
-                    {/*<div className="person_space"></div>*/}
-                    {/*<div className="person_space"></div>*/}
+                    {localS}
+                    {peerStreams.length? <PeerParticipants {...{peerStreams}}/>: <NormalParticipants participants={participants}/>}
                 </div>
             </div>
 

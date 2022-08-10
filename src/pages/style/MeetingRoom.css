@@ -45,6 +45,19 @@
     background-color: #432943;
     border-radius: 0.2em;
     margin: 0 0.5em;
+    position: relative;
+    overflow: hidden;
+}
+
+.person_space > .stream-name {
+    position: absolute;
+    font-size: 1.4em;
+    height: 8%;
+    width: 100%;
+    color: azure;
+    background-color: grey;
+    bottom: -1em;
+    padding-left: 2em;
 }
 
 .meeting_actions {
