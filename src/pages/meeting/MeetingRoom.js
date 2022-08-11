@@ -69,25 +69,16 @@ export default function MeetingRoom (props) {
 
         if (call) {
             statusText.current.innerText = call.state;
-
-            const sc = () => {
-                switch (call.state) {
-                    case 'Disconnecting':
-                        statusText.current.innerText = 'Leaving call';
-                        break;
-
-                    default:
-                        break;
-                }
-            };
-
             const participantsChange = () => {
                 setParticipants(call.remoteParticipants)
             };
 
-            call.on('totalParticipantCountChanged', participantsChange);
-            call.on('stateChanged', sc);
-            call.off('stateChanged', sc);
+            // initial participants painting
+            if (call.remoteParticipants && Array.isArray(call.remoteParticipants) && call.remoteParticipants.length > 0) {
+                participantsChange();
+            }
+
+            call.on('remoteParticipantsUpdated', participantsChange);
         } else {
             switchMeeting(false);
         }
@@ -123,7 +114,9 @@ export default function MeetingRoom (props) {
                         <hr />
                         <span>Host: {getHostDisplayName()}</span>
                         <hr />
-                        <span>Participants: {call['totalParticipantCount']}</span>
+                        <span>
+                            Participants: { call && call.remoteParticipants && Array.isArray(call.remoteParticipants)? call.remoteParticipants.length: 0 }
+                        </span>
                         <hr />
                         <span ref={statusText} />
                         <hr />
