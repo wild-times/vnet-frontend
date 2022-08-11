@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { LocalVideoStream } from '@azure/communication-calling';
 import { NavLink } from "react-router-dom";
+import { LocalVideoStream } from '@azure/communication-calling';
 import { MeetingVideo } from './MeetingItems';
 import '../style/SetUpRoom.css';
 
@@ -17,33 +17,6 @@ export default function SetupMeeting (props) {
     const joinText = useRef(null);
     const micOptions = mics.map((mic, i) => <DeviceOption key={i} name={mic.name} index={i} />);
     const cameraOptions = cameras.map((cam, i) => <DeviceOption key={i} name={cam.name} index={i}/>);
-
-    // join call button
-    const joinCallEventHandler = () => {
-        // join call here
-        const callOptions = {
-            videoOptions: {localVideoStreams: [localStream]}
-        };
-
-        const _call = callAgent.join({
-            groupId: meeting['meetingUuid']
-        }, callOptions);
-
-        _call.on('stateChanged', () => {
-            switch (_call.state) {
-                case 'Connecting':
-                    joinText.current.innerText = 'Connecting to call';
-                    break;
-
-                case 'Connected':
-                    switchMeeting(2);
-                    break;
-
-                default:
-                    break;
-            }
-        });
-    };
 
     useEffect(() => {
         // load devices and display local stream
@@ -63,12 +36,39 @@ export default function SetupMeeting (props) {
     }, [deviceManager, setLocalStream]);
 
     useEffect(() => {
+        // join call button
+        const joinCallEventHandler = () => {
+            // join call here
+            const callOptions = {
+                videoOptions: {localVideoStreams: [localStream]}
+            };
+
+            const _call = callAgent.join({
+                groupId: meeting['meetingUuid']
+            }, callOptions);
+
+            _call.on('stateChanged', () => {
+                switch (_call.state) {
+                    case 'Connecting':
+                        joinText.current.innerText = 'Connecting to call';
+                        break;
+
+                    case 'Connected':
+                        switchMeeting(2);
+                        break;
+
+                    default:
+                        break;
+                }
+            });
+        };
+
         if (cameras.length && mics.length && joinButton.current) {
             joinButton.current.disabled = false;
             joinButton.current.addEventListener('click', joinCallEventHandler);
             joinText.current.style.display = 'block';
         }
-    }, [cameras, mics, joinButton]);
+    }, [cameras, mics, joinButton, callAgent, localStream, meeting, switchMeeting]);
 
     const switchCamera = async (switchEvent) => {
         await localStream.switchSource(cameras[switchEvent.target.value]);

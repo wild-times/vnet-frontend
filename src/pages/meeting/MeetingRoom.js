@@ -54,7 +54,7 @@ export default function MeetingRoom (props) {
 
     const leaveMeetingEvent = () => {
         call.hangUp().then(() => {
-            callAgent.dispose();
+            callAgent && !callAgent.disposed? callAgent.dispose(): void 0;
             switchMeeting(3);
         });
     };

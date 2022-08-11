@@ -21,7 +21,6 @@ function MeetingLite (props) {
     const [devicePermissions, setDevicePermissions] = useState(null);
     const [localStream, setLocalStream] = useState(null);
 
-
     useEffect(() => {
         //  name to be used in the display
         const getDisplayName = () => {
@@ -59,8 +58,12 @@ function MeetingLite (props) {
             setDevicePermissions(_args[4]);
         }).catch((e) => console.error(e));
 
-        return () => callAgent? callAgent.dispose(): void 0;
-    }, [meeting, user]);
+        return () => {
+            if (inMeeting === 1 && callAgent && !callAgent.disposed) {
+                callAgent.dispose();
+            }
+        };
+    }, [meeting, user, callAgent]);
 
     const toShow = (() => {
         let comp = <LoadingScreen message={`Preparing to set up ${meeting['title']}`} />;
