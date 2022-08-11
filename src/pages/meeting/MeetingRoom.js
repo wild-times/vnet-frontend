@@ -5,7 +5,7 @@ import '../style/MeetingRoom.css';
 
 
 function NormalParticipants (props) {
-    const { participants } = props;
+    const { participants, call } = props;
     const [partViews, setPartViews] = useState([]);
 
     useEffect(() => {
@@ -23,7 +23,11 @@ function NormalParticipants (props) {
             return parts;
         };
 
-        loadParts().then((p) => setPartViews(p));
+        const mainViewSetter = () => loadParts().then((p) => setPartViews(p));
+
+        mainViewSetter();
+
+        call.on('remoteParticipantsUpdated', mainViewSetter);
     }, [participants]);
 
     return <>{partViews}</>;
@@ -125,7 +129,7 @@ export default function MeetingRoom (props) {
 
                 <div className="people_div">
                     {localS}
-                    {peerStreams.length? <PeerParticipants {...{peerStreams}}/>: <NormalParticipants participants={participants}/>}
+                    {peerStreams.length? <PeerParticipants {...{peerStreams}}/>: <NormalParticipants {...{call, participants}}/>}
                 </div>
             </div>
 
