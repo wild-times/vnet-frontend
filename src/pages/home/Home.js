@@ -22,6 +22,8 @@ function ExistingMeetingDetails (props) {
                 </div>
                 <div className="vnet-modal-body">
                     <p>{ notes }</p>
+                    <hr/>
+                    <NavLink style={{width: '5%', height: '0.3em'}} className="wild-buttons" to={`/conf/${meetingId}/`}>Join</NavLink>
                 </div>
                 <div className="vnet-modal-footer">
                     <h3>{ dayDisplay } at { startTimeDisplay }{endTimeDisplay? ` to ${endTimeDisplay}`: null} by you</h3>
