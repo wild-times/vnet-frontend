@@ -44,6 +44,11 @@
     font-size: 1.6em;
 }
 
+.navbar_userDetails_username > a {
+    text-decoration: none;
+    color: inherit;
+}
+
 .navbar_userDetails_email {
     font-weight: 500;
     font-size: 1.2em;

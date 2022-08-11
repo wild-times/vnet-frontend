@@ -11,7 +11,7 @@ import LoadingScreen from "./pages/home/LoadingScreen";
 import { getUserDetails, getUserDetailsWithCreds } from './utils/req';
 
 
-function TempApp (props) {
+function App (props) {
     const { token: userToken } = props;
     const { status, data } = useQuery('user', () => getUserDetails(userToken), {
         refetchOnWindowFocus: false
@@ -27,10 +27,10 @@ function TempApp (props) {
 
     if (displayDiv) {
         return (
-            <div id='vnet-home'>
+            <BrowserRouter id='vnet-home'>
                 <Title/>
                 { displayDiv }
-            </div>
+            </BrowserRouter>
         )
     }
 
@@ -50,7 +50,7 @@ function TempApp (props) {
 }
 
 
-export default function App () {
+export default function DevApp () {
     /* Handle user authentication in development */
     const [token, setToken] = useState(null);
 
@@ -63,7 +63,7 @@ export default function App () {
     };
 
     if (token) {
-        return <TempApp token={token} />
+        return <App token={token} />
     }
     return (
         <div>

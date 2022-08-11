@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router-dom';
 import reqData from '../../utils/wild';
 import '../style/Title.css';
 
@@ -8,20 +9,22 @@ export default function Title (props) {
 
     return (
         <div className="navbar" style={{backgroundImage: `url(${reqData.vnetBackgroundLarge})`}}>
-            <img src={reqData.vnetLogo} alt="Logo for VNET" className="navbar_vnet_logo" />
-                {
-                    name?
-                    <div className="navbar_userDetails">
-                        <div className="navbar_userDetails_text">
-                            <p className="navbar_userDetails_username">{ name }</p>
-                            <span className="navbar_userDetails_email">{user['email']}</span>
-                        </div>
+            <NavLink to='/'>
+                <img src={reqData.vnetLogo} alt="Logo for VNET" className="navbar_vnet_logo" />
+            </NavLink>
+            {
+                name?
+                <div className="navbar_userDetails">
+                    <div className="navbar_userDetails_text">
+                        <p className="navbar_userDetails_username"><a href={'/account/profile/'}>{ name }</a></p>
+                        <span className="navbar_userDetails_email">{user['email']}</span>
+                    </div>
 
-                        <div className="navbar_userDetails_avatar">
-                            <img src={user['profileImage']} alt="user_avatar" className="navbar_avatar_img" />
-                        </div>
-                    </div>: null
-                }
+                    <div className="navbar_userDetails_avatar">
+                        <img src={user['profileImage']} alt="user_avatar" className="navbar_avatar_img" />
+                    </div>
+                </div>: null
+            }
         </div>
     )
 }
