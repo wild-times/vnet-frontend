@@ -1,26 +1,25 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 import { useQuery } from "react-query";
 import { AzureCommunicationTokenCredential } from '@azure/communication-common';
 import { CallClient } from '@azure/communication-calling';
 
 import MeetingRoom from './MeetingRoom';
-import SetUp from './SetUpMeeting';
+import SetupMeeting from './SetUpMeeting';
 import LeftMeeting from "./AfterMeeting";
+import LoadingScreen from "../home/LoadingScreen";
 import { fetchMeeting, getUserDetails } from "../../utils/req";
 
 
 function MeetingLite (props) {
     const { user, meeting } = props;
-    // choices are 1, 2, 3: 1 = set up, 2 = meeting room/in meeting, 3 = left meeting.
-    const [inMeeting, inMeetingSwitch] = useState(1);
+    const [inMeeting, inMeetingSwitch] = useState(1); // choices are 1, 2, 3: 1 = set up, 2 = meeting room/in meeting, 3 = left meeting.
     const [tokenCredential, setTokenCredential] = useState(null);
     const [callClient, setCallClient] = useState(null);
     const [callAgent, setCallAgent] = useState(null);
     const [deviceManager, setDeviceManager] = useState(null);
     const [devicePermissions, setDevicePermissions] = useState(null);
     const [localStream, setLocalStream] = useState(null);
-
 
     useEffect(() => {
         //  name to be used in the display
@@ -59,11 +58,15 @@ function MeetingLite (props) {
             setDevicePermissions(_args[4]);
         }).catch((e) => console.error(e));
 
-        return () => callAgent? callAgent.dispose(): void 0;
-    }, [meeting, user]);
+        return () => {
+            if (inMeeting === 1 && callAgent && !callAgent.disposed) {
+                callAgent.dispose();
+            }
+        };
+    }, [meeting, user, callAgent]);
 
     const toShow = (() => {
-        let comp = <div>Setting up</div>;
+        let comp = <LoadingScreen message={`Preparing to set up ${meeting['title']}`} />;
 
         if (tokenCredential && callClient && callAgent && deviceManager && devicePermissions.audio && devicePermissions.video) {
             const dep = {
@@ -79,7 +82,7 @@ function MeetingLite (props) {
             };
 
             if (inMeeting === 1) {
-                comp = <SetUp {...dep}/>
+                comp = <SetupMeeting {...dep}/>
             } else if (inMeeting === 2) {
                 comp = <MeetingRoom {...dep} />
             } else if (inMeeting === 3) {
@@ -108,20 +111,29 @@ export default function Meeting (props) {
         refetchOnWindowFocus: false
     });
 
-    // TODO: to be replaced with better pages for loading...etc
     if (status === 'loading') {
-        return <div>working on meeting</div>
+        return <LoadingScreen message='Getting meeting details'/>
     } else if (status === 'error') {
-        return <div>An error occurred while fetching meeting</div>
-    }
+        return (
+            <div className="center-mix">
+                <h1>Could not load meeting details for "{meetingCode}"</h1>
+                <NavLink style={{width: '5em', margin: 'auto'}} to='/' className="wild-buttons">Home</NavLink>
+            </div>
+        )
 
+    }
     const meetingNotFound = (() => meetingData && meetingData.hasOwnProperty('message') && meetingData.message === 'Meeting not found')();
 
     return (
         <div id="vnet-meeting">
-            <h2>Welcome to VNET meeting</h2>
-
-            {meetingNotFound? <h3>Could not find the meeting with code "{meetingCode}"</h3>: <MeetingLite meeting={meetingData} user={userData}/>}
+            {
+                meetingNotFound? (
+                    <div className="center-mix">
+                        <h1>Could not find the meeting with code "{meetingCode}"</h1>
+                        <NavLink style={{width: '5em', margin: 'auto'}} to='/' className="wild-buttons">Home</NavLink>
+                    </div>
+                ): <MeetingLite meeting={meetingData} user={userData}/>
+            }
         </div>
     )
 }

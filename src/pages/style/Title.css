@@ -1,0 +1,64 @@
+.navbar {
+    margin: 0 0 2em 0;
+    height: 7em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #680768;
+    padding: 0 2em 0 2em;
+}
+
+.navbar_vnet_logo {
+    width: auto;
+    height: 4em;
+}
+
+.navbar_userDetails, .navbar_userDetails_text, .navbar_userDetails_avatar {
+    display: flex;
+}
+
+.navbar_userDetails {
+    width: 50em;
+    height: 6em;
+}
+
+.navbar_userDetails_text {
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    margin-right: 0;
+    padding: 0;
+}
+
+.navbar_userDetails_username, .navbar_userDetails_email {
+    display: flex;
+    justify-content: flex-end;
+    color: #FFFFFF;
+    height: auto;
+    padding: 0;
+    margin: 0;
+}
+
+.navbar_userDetails_username {
+    font-weight: bold;
+    font-size: 1.6em;
+}
+
+.navbar_userDetails_email {
+    font-weight: 500;
+    font-size: 1.2em;
+}
+
+.navbar_userDetails_avatar {
+    width: 6em;
+    height: 100%;
+    border-radius: 40%;
+    padding: 0;
+    margin-left: 1em;
+}
+
+.navbar_avatar_img {
+    width: 100%;
+    height: 100%;
+    border-radius: 40%;
+}

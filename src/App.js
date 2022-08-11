@@ -7,6 +7,7 @@ import Error404 from './pages/home/Error404';
 import Home from './pages/home/Home';
 import CreateMeeting from './pages/meetingActions/CreateMeeting';
 import Meeting from './pages/meeting/Meeting';
+import LoadingScreen from "./pages/home/LoadingScreen";
 import { getUserDetails, getUserDetailsWithCreds } from './utils/req';
 
 
@@ -16,11 +17,21 @@ function TempApp (props) {
         refetchOnWindowFocus: false
     });
 
-    // TODO: to be replaced with better pages for loading...etc
-    if (status === 'loading') {
-        return <div id="vnet-home">working</div>
-    } else if (status === 'error') {
-        return <div id="vnet-home">An error occurred</div>
+    const displayDiv = (() => {
+        if (status === 'loading') {
+            return <LoadingScreen message='Getting user details' />;
+        } else if (status === 'error') {
+            return <h1 className="center-mix">An error occurred fetching user details</h1>;
+        }
+    })();
+
+    if (displayDiv) {
+        return (
+            <div id='vnet-home'>
+                <Title/>
+                { displayDiv }
+            </div>
+        )
     }
 
     return (
@@ -39,7 +50,7 @@ function TempApp (props) {
 }
 
 
-function App () {
+export default function App () {
     /* Handle user authentication in development */
     const [token, setToken] = useState(null);
 
@@ -74,4 +85,3 @@ function App () {
         </div>
     )
 }
-export default App;

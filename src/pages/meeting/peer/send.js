@@ -1,12 +1,16 @@
-import { useEffect, useRef } from "react";
+import { useRef, useState } from "react";
 
 export default function PeerShare (props) {
-    const { signalling, name, signalTypes } = props;
+    const { signalling, name, signalTypes, shareModal } = props;
+    const [randomCode, setRandomCode] = useState(0);
     const status = useRef(null);
     const statusPeer = useRef(null);
-    const randomCode = Math.floor(Math.random() * (1000000 - 100000 + 1) + 100000);
 
-    useEffect(() => {
+    const closeShareModal = () => {
+        shareModal.current.style.display = '';
+    };
+
+    const initSharing = () => {
         const streamIds = [];
 
         // collect all streams
@@ -55,6 +59,7 @@ export default function PeerShare (props) {
             peerConnection.addEventListener('connectionstatechange', () => {
                 if (peerConnection.connectionState === 'connected') {
                     statusPeer.current.innerText = 'Connected to peer';
+                    closeShareModal();
                 }
             });
 
@@ -105,16 +110,41 @@ export default function PeerShare (props) {
                 await makeConnectionSend(sig);
             }
         };
+    };
 
-    }, [randomCode]);
+    const startSharing = () => setRandomCode(Math.floor(Math.random() * (1000000 - 100000 + 1) + 100000));
+
+    if (randomCode) {
+        initSharing();
+    }
 
     return (
-        <div>
-            <h2>Copy this code to your peer to host a connection</h2>
-            <span>{randomCode}</span><br/>
-            <span ref={status}>Not Connected to signalling server</span>
-            <br />
-            <span ref={statusPeer} />
+        <div className="vnet-modal" id="host-peer" ref={shareModal}>
+            <div className="vnet-modal-content peer-modal">
+                <div className="vnet-modal-header">
+                    <span onClick={closeShareModal} className="vnet-modal-close">&times;</span>
+                    <h2>Share with peer</h2>
+                </div>
+                <div className="vnet-modal-body">
+                    {
+                        randomCode? (
+                            <>
+                                <p>Copy this code to the network peer to host a connection</p>
+                                <span>{ randomCode }</span>
+                            </>
+                        ): (
+                            <div style={{width: '30%', margin: 'auto', marginTop: '2em', marginBottom: '2em'}}>
+                                <button onClick={startSharing} style={{background: 'azure', color: '#432943'}} className="wild-buttons">
+                                    Start sharing
+                                </button>
+                            </div>
+                        )
+                    }
+                </div>
+                <div className="vnet-modal-footer">
+                    <h3><span ref={status}>Not connected to signalling server</span> • <span ref={statusPeer}>Not connected to peer</span></h3>
+                </div>
+            </div>
         </div>
     )
 }

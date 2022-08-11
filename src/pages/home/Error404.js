@@ -1,7 +1,7 @@
 export default function Error404 () {
     return (
-        <div>
-           <h2>404 page not found</h2>
+        <div className='center-mix'>
+           <h1>404 page not found on VNET</h1>
         </div>
     )
 }
