@@ -52,7 +52,11 @@ export default function MeetingRoom (props) {
     const statusText = useRef(null);
     const call = callAgent.calls.length? callAgent.calls[0]: null;
 
-    const leaveMeetingEvent = () => {
+    const leaveMeetingEvent = (event_) => {
+        const leaveButton = event_.target;
+        leaveButton.innerText = 'Leaving';
+        leaveButton.disabled = true;
+
         call.hangUp().then(() => {
             callAgent && !callAgent.disposed? callAgent.dispose(): void 0;
             switchMeeting(3);
