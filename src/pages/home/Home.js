@@ -8,7 +8,7 @@ import '../style/Home.css';
 
 
 function ExistingMeetingDetails (props) {
-    const { title, startTimeDisplay, endTimeDisplay, dayDisplay, notes, theModal } = props;
+    const { title, startTimeDisplay, endTimeDisplay, dayDisplay, notes, meetingId, theModal } = props;
     const closeDetails = () => {
         theModal.current.style.display = ''
     };
@@ -18,7 +18,7 @@ function ExistingMeetingDetails (props) {
             <div className="vnet-modal-content meeting-dash-meeting-details">
                 <div className="vnet-modal-header">
                     <span onClick={closeDetails} className="vnet-modal-close">&times;</span>
-                    <h2>{ title }</h2>
+                    <h2>{ title } | <small>{ meetingId }</small></h2>
                 </div>
                 <div className="vnet-modal-body">
                     <p>{ notes }</p>
