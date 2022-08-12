@@ -119,7 +119,7 @@ export default function MeetingRoom (props) {
                         <span>Host: {getHostDisplayName()}</span>
                         <hr />
                         <span>
-                            Participants: { call && call.remoteParticipants && Array.isArray(call.remoteParticipants)? call.remoteParticipants.length: 0 }
+                            Participants: { call && call.remoteParticipants && Array.isArray(call.remoteParticipants)? call.remoteParticipants.length + 1: 1 }
                         </span>
                         <hr />
                         <span ref={statusText} />
