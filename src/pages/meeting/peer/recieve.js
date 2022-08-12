@@ -43,6 +43,11 @@ export default function PeerReceive (props) {
                     statusPeer.current.innerText = 'Connected to peer';
                     closeReceiveModal();
                     buildStreams();
+                } else if (peerConnection.connectionState === 'connecting') {
+                    statusPeer.current.innerText = 'Connecting to peer';
+                } else {
+                    statusPeer.current.innerText = 'Not Connected to peer';
+                    setPeerStreams([]);
                 }
             });
 
