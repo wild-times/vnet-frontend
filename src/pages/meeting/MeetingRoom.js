@@ -135,7 +135,7 @@ export default function MeetingRoom (props) {
 
             <section className="meeting_actions">
                 <div className="meeting_actions_options">
-                    <SetUpPeer name={callAgent.displayName} {...{setPeerStreams}}/>
+                    <SetUpPeer name={callAgent.displayName} {...{setPeerStreams, call}}/>
                     <button onClick={leaveMeetingEvent} className="meeting_actions_btn">Leave Call</button>
                 </div>
             </section>

@@ -1,8 +1,8 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 
 
 export default function PeerReceive (props) {
-    const { signalling, name, signalTypes, setPeerStreams, receiveModal } = props;
+    const { call, signalling, name, signalTypes, setPeerStreams, receiveModal } = props;
     const status = useRef(null);
     const statusPeer = useRef(null);
     const streamIds = [];
@@ -43,6 +43,12 @@ export default function PeerReceive (props) {
                     statusPeer.current.innerText = 'Connected to peer';
                     closeReceiveModal();
                     buildStreams();
+
+                    call.on("stateChanged", () => {
+                        if (call.state === 'Disconnected') {
+                            peerConnection.close();
+                        }
+                    });
                 } else if (peerConnection.connectionState === 'connecting') {
                     statusPeer.current.innerText = 'Connecting to peer';
                 } else {

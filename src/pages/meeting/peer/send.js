@@ -1,12 +1,11 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 
 
 export default function PeerShare (props) {
-    const { signalling, name, signalTypes, shareModal } = props;
+    const { call, signalling, name, signalTypes, shareModal } = props;
     const [randomCode, setRandomCode] = useState(0);
     const status = useRef(null);
     const statusPeer = useRef(null);
-    let peerConnection;
 
     const closeShareModal = () => {
         shareModal.current.style.display = '';
@@ -39,7 +38,7 @@ export default function PeerShare (props) {
 
         // make an RTCPeerConnection
         const makeConnectionSend = async (signal) => {
-            peerConnection = new RTCPeerConnection();
+            const peerConnection = new RTCPeerConnection();
 
             // add streams
             collectStreams().forEach((stream) => {
@@ -62,6 +61,12 @@ export default function PeerShare (props) {
                 if (peerConnection.connectionState === 'connected') {
                     statusPeer.current.innerText = 'Connected to peer';
                     closeShareModal();
+
+                    call.on("stateChanged", () => {
+                        if (call.state === 'Disconnected') {
+                            peerConnection.close();
+                        }
+                    });
                 } else if (peerConnection.connectionState === 'connecting') {
                     statusPeer.current.innerText = 'Connecting to peer';
                 } else {
@@ -117,15 +122,6 @@ export default function PeerShare (props) {
             }
         };
     };
-
-    useEffect(() => {
-        return () => {
-            // close peer connection when gone!
-            if (peerConnection) {
-                peerConnection.close();
-            }
-        };
-    });
 
     const startSharing = () => setRandomCode(Math.floor(Math.random() * (1000000 - 100000 + 1) + 100000));
 
