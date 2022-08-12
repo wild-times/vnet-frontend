@@ -15,7 +15,7 @@ function NormalParticipants (props) {
             for (const part of participants) {
                 const rstream = await part.videoStreams[0];
                 const name = part.displayName;
-                const id_ = part.identifier;
+                const id_ = part.identifier.communicationUserId;
 
                 parts.push(<MeetingVideo apprName={'person_space'} key={id_} you={false} name={name} stream={rstream}/>)
             }
