@@ -5,7 +5,7 @@ import reqData from '../../../utils/wild';
 
 
 export default function SetUpPeer (props) {
-    const { name, setPeerStreams } = props;
+    const { name, setPeerStreams, call } = props;
     const shareModal = useRef(null);
     const receiveModal = useRef(null);
 
@@ -25,6 +25,7 @@ export default function SetUpPeer (props) {
             ANSWER: 'answer',
             CANDIDATE: 'candidate'
         },
+        call,
         name,
         shareModal,
         receiveModal

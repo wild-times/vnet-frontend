@@ -1,7 +1,8 @@
 import { useRef, useState } from "react";
 
+
 export default function PeerShare (props) {
-    const { signalling, name, signalTypes, shareModal } = props;
+    const { call, signalling, name, signalTypes, shareModal } = props;
     const [randomCode, setRandomCode] = useState(0);
     const status = useRef(null);
     const statusPeer = useRef(null);
@@ -60,6 +61,16 @@ export default function PeerShare (props) {
                 if (peerConnection.connectionState === 'connected') {
                     statusPeer.current.innerText = 'Connected to peer';
                     closeShareModal();
+
+                    call.on("stateChanged", () => {
+                        if (call.state === 'Disconnected') {
+                            peerConnection.close();
+                        }
+                    });
+                } else if (peerConnection.connectionState === 'connecting') {
+                    statusPeer.current.innerText = 'Connecting to peer';
+                } else {
+                    statusPeer.current.innerText = 'Not Connected to peer';
                 }
             });
 

@@ -5,7 +5,7 @@ import '../style/MeetingRoom.css';
 
 
 function NormalParticipants (props) {
-    const { participants } = props;
+    const { participants, call } = props;
     const [partViews, setPartViews] = useState([]);
 
     useEffect(() => {
@@ -15,7 +15,7 @@ function NormalParticipants (props) {
             for (const part of participants) {
                 const rstream = await part.videoStreams[0];
                 const name = part.displayName;
-                const id_ = part.identifier;
+                const id_ = part.identifier.communicationUserId;
 
                 parts.push(<MeetingVideo apprName={'person_space'} key={id_} you={false} name={name} stream={rstream}/>)
             }
@@ -23,7 +23,11 @@ function NormalParticipants (props) {
             return parts;
         };
 
-        loadParts().then((p) => setPartViews(p));
+        const mainViewSetter = () => loadParts().then((p) => setPartViews(p));
+
+        mainViewSetter();
+
+        call.on('remoteParticipantsUpdated', mainViewSetter);
     }, [participants]);
 
     return <>{partViews}</>;
@@ -52,7 +56,11 @@ export default function MeetingRoom (props) {
     const statusText = useRef(null);
     const call = callAgent.calls.length? callAgent.calls[0]: null;
 
-    const leaveMeetingEvent = () => {
+    const leaveMeetingEvent = (event_) => {
+        const leaveButton = event_.target;
+        leaveButton.innerText = 'Leaving';
+        leaveButton.disabled = true;
+
         call.hangUp().then(() => {
             callAgent && !callAgent.disposed? callAgent.dispose(): void 0;
             switchMeeting(3);
@@ -65,25 +73,16 @@ export default function MeetingRoom (props) {
 
         if (call) {
             statusText.current.innerText = call.state;
-
-            const sc = () => {
-                switch (call.state) {
-                    case 'Disconnecting':
-                        statusText.current.innerText = 'Leaving call';
-                        break;
-
-                    default:
-                        break;
-                }
-            };
-
             const participantsChange = () => {
                 setParticipants(call.remoteParticipants)
             };
 
-            call.on('totalParticipantCountChanged', participantsChange);
-            call.on('stateChanged', sc);
-            call.off('stateChanged', sc);
+            // initial participants painting
+            if (call.remoteParticipants && Array.isArray(call.remoteParticipants) && call.remoteParticipants.length > 0) {
+                participantsChange();
+            }
+
+            call.on('remoteParticipantsUpdated', participantsChange);
         } else {
             switchMeeting(false);
         }
@@ -119,7 +118,9 @@ export default function MeetingRoom (props) {
                         <hr />
                         <span>Host: {getHostDisplayName()}</span>
                         <hr />
-                        <span>Participants: {call['totalParticipantCount']}</span>
+                        <span>
+                            Participants: { call && call.remoteParticipants && Array.isArray(call.remoteParticipants)? call.remoteParticipants.length + 1: 1 }
+                        </span>
                         <hr />
                         <span ref={statusText} />
                         <hr />
@@ -128,13 +129,13 @@ export default function MeetingRoom (props) {
 
                 <div className="people_div">
                     {localS}
-                    {peerStreams.length? <PeerParticipants {...{peerStreams}}/>: <NormalParticipants participants={participants}/>}
+                    {peerStreams.length? <PeerParticipants {...{peerStreams}}/>: <NormalParticipants {...{call, participants}}/>}
                 </div>
             </div>
 
             <section className="meeting_actions">
                 <div className="meeting_actions_options">
-                    <SetUpPeer name={callAgent.displayName} {...{setPeerStreams}}/>
+                    <SetUpPeer name={callAgent.displayName} {...{setPeerStreams, call}}/>
                     <button onClick={leaveMeetingEvent} className="meeting_actions_btn">Leave Call</button>
                 </div>
             </section>
