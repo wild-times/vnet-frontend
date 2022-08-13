@@ -28,6 +28,10 @@ function NormalParticipants (props) {
         mainViewSetter();
 
         call.on('remoteParticipantsUpdated', mainViewSetter);
+
+        return () => {
+            call.off('remoteParticipantsUpdated', mainViewSetter);
+        }
     }, [participants]);
 
     return <>{partViews}</>;
