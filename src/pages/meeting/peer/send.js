@@ -56,17 +56,49 @@ export default function PeerShare (props) {
                 }));
             });
 
+            channel.addEventListener('message', (channelEvent) => {
+                const channelMessage = JSON.parse(channelEvent.data);
+
+                if (channelMessage.type === 'streams_query') {
+                    const newStreams = collectStreams();
+
+                    // find the difference in streams
+                    const peerStreamIds = channelMessage.streams.map((stream) => stream.id);
+                    const localStreamIds = streamIds.map((stream) => stream.id);
+
+                    if ((peerStreamIds.findIndex((id) => !localStreamIds.includes(id)) > -1) || localStreamIds.findIndex((id) => !peerStreamIds.includes(id)) > -1) {
+
+                        channel.send(JSON.stringify({
+                            type: 'stream_ids',
+                            streams: streamIds
+                        }));
+
+                        newStreams.forEach((stream) => {
+                            stream.getTracks().forEach((track) => {
+                                try {
+                                    peerConnection.addTrack(track, stream);
+                                } catch (e) {
+                                    console.log(e);
+                                }
+                            });
+                        });
+                    }
+                }
+            });
+
             // close signalling server connection when connected
             peerConnection.addEventListener('connectionstatechange', () => {
                 if (peerConnection.connectionState === 'connected') {
                     statusPeer.current.innerText = 'Connected to peer';
                     closeShareModal();
 
+                    // close the peer connection when the call ends
                     call.on("stateChanged", () => {
                         if (call.state === 'Disconnected') {
                             peerConnection.close();
                         }
                     });
+
                 } else if (peerConnection.connectionState === 'connecting') {
                     statusPeer.current.innerText = 'Connecting to peer';
                 } else {

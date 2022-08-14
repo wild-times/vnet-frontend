@@ -17,8 +17,10 @@ export default function PeerReceive (props) {
         const sig = signalling(f.get('code'), status.current);
         [...event_.target].forEach((element) => element.disabled = true);
 
+
         const makeConnectionReceive = async (signal) => {
             const peerConnection = new RTCPeerConnection();
+            let streamQuery;
 
             const buildStreams = () => {
                 const tracks = peerConnection.getReceivers().map((receiver) => receiver.track);
@@ -44,11 +46,18 @@ export default function PeerReceive (props) {
                     closeReceiveModal();
                     buildStreams();
 
+                    // close peer connection when the call ends & stop query
                     call.on("stateChanged", () => {
                         if (call.state === 'Disconnected') {
                             peerConnection.close();
+                            clearInterval(streamQuery);
                         }
                     });
+
+                    peerConnection.addEventListener('track', () => {
+                        buildStreams();
+                    });
+
                 } else if (peerConnection.connectionState === 'connecting') {
                     statusPeer.current.innerText = 'Connecting to peer';
                 } else {
@@ -81,6 +90,17 @@ export default function PeerReceive (props) {
                             streamIds.splice(0, streamIds.length, ...channelMessage.streams)
                         }
                     });
+
+                    // query the sender when, if they have new streams
+                    streamQuery = () => {
+                        if (channel.readyState === 'open') {
+                            channel.send(JSON.stringify({
+                                type: 'streams_query',
+                                streams: streamIds
+                            }));
+                        }
+                    };
+                    setInterval(streamQuery, 15000);
                 }
             });
 
