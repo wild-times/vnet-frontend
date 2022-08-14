@@ -50,7 +50,6 @@ export default function PeerReceive (props) {
                     call.on("stateChanged", () => {
                         if (call.state === 'Disconnected') {
                             peerConnection.close();
-                            clearInterval(streamQuery);
                         }
                     });
 
@@ -62,6 +61,7 @@ export default function PeerReceive (props) {
                     statusPeer.current.innerText = 'Connecting to peer';
                 } else {
                     statusPeer.current.innerText = 'Not Connected to peer';
+                    clearInterval(streamQuery);
                     setPeerStreams([]);
                 }
             });
@@ -87,7 +87,7 @@ export default function PeerReceive (props) {
 
                         // save stream IDs
                         if (channelMessage.type === 'stream_ids' && Array.isArray(channelMessage.streams)) {
-                            streamIds.splice(0, streamIds.length, ...channelMessage.streams)
+                            streamIds.splice(0, streamIds.length, ...channelMessage.streams);
                         }
                     });
 

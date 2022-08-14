@@ -13,6 +13,7 @@ export default function PeerShare (props) {
 
     const initSharing = () => {
         const streamIds = [];
+        const streamsOG = [];
 
         // collect all streams
         function collectStreams () {
@@ -26,14 +27,20 @@ export default function PeerShare (props) {
                     el['firstElementChild']['firstElementChild'].nodeName === 'VIDEO'
                 ].every(Boolean)
             });
+            const collectedStreams = [];
 
-            // save stream id and name
-            streamIds.splice(0, streamIds.length, ...filteredStreamHomes.map((el) => ({
-                name: el['id'],
-                id: el['firstElementChild']['firstElementChild'].srcObject.getTracks()[0].id
-            })));
+            streamIds.splice(0, streamIds.length, ...filteredStreamHomes.map((el) => {
+                const lStream = el['firstElementChild']['firstElementChild'].srcObject.clone();
+                collectedStreams.push(lStream);
+                streamsOG.push(lStream);
 
-            return filteredStreamHomes.map((el) => el['firstElementChild']['firstElementChild'].srcObject);
+                return {
+                    name: el['id'],
+                    id: lStream.getTracks()[0].id
+                }
+            }));
+
+            return collectedStreams;
         }
 
         // make an RTCPeerConnection
@@ -52,11 +59,12 @@ export default function PeerShare (props) {
             channel.addEventListener('open', () => {
                 channel.send(JSON.stringify({
                     type: 'stream_ids',
-                    streams: streamIds
+                    streams: streamIds,
+                    act: false
                 }));
             });
 
-            channel.addEventListener('message', (channelEvent) => {
+            channel.addEventListener('message', async (channelEvent) => {
                 const channelMessage = JSON.parse(channelEvent.data);
 
                 if (channelMessage.type === 'streams_query') {
@@ -66,12 +74,12 @@ export default function PeerShare (props) {
                     const peerStreamIds = channelMessage.streams.map((stream) => stream.id);
                     const localStreamIds = streamIds.map((stream) => stream.id);
 
-                    if ((peerStreamIds.findIndex((id) => !localStreamIds.includes(id)) > -1) || localStreamIds.findIndex((id) => !peerStreamIds.includes(id)) > -1) {
-
-                        channel.send(JSON.stringify({
-                            type: 'stream_ids',
-                            streams: streamIds
-                        }));
+                    if ((peerStreamIds.findIndex((id) => !localStreamIds.includes(id)) > -1) || (localStreamIds.findIndex((id) => !peerStreamIds.includes(id)) > -1)) {
+                        peerConnection.getSenders().forEach((sender) => {
+                            if (sender.track) {
+                                peerConnection.removeTrack(sender);
+                            }
+                        });
 
                         newStreams.forEach((stream) => {
                             stream.getTracks().forEach((track) => {
@@ -82,6 +90,11 @@ export default function PeerShare (props) {
                                 }
                             });
                         });
+
+                        channel.send(JSON.stringify({
+                            type: 'stream_ids',
+                            streams: streamIds,
+                        }));
                     }
                 }
             });
@@ -96,6 +109,7 @@ export default function PeerShare (props) {
                     call.on("stateChanged", () => {
                         if (call.state === 'Disconnected') {
                             peerConnection.close();
+                            streamsOG.forEach((streamOG) => streamOG.getTracks().forEach((track) => track.stop()));
                         }
                     });
 
@@ -139,7 +153,11 @@ export default function PeerShare (props) {
                     await peerConnection.setRemoteDescription(new RTCSessionDescription(message.description));
 
                 } else if (message.type === signalTypes.CANDIDATE) {
-                    await peerConnection.addIceCandidate(new RTCIceCandidate(message['candidates']))
+                    try {
+                        await peerConnection.addIceCandidate(new RTCIceCandidate(message['candidates']));
+                    } catch (e) {
+                        console.log(e);
+                    }
                 }
             });
         };
