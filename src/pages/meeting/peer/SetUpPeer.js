@@ -8,6 +8,8 @@ export default function SetUpPeer (props) {
     const { name, setPeerStreams, call } = props;
     const shareModal = useRef(null);
     const receiveModal = useRef(null);
+    const shareButton = useRef(null);
+    const receiveButton = useRef(null);
 
     // noinspection JSUnusedGlobalSymbols
     const rtcOptions = {
@@ -25,24 +27,27 @@ export default function SetUpPeer (props) {
             ANSWER: 'answer',
             CANDIDATE: 'candidate'
         },
+        rivalEnd: (isHost) => {
+            if (isHost) {
+                receiveModal.current = null;
+                receiveButton.current.disabled = true;
+            } else {
+                shareModal.current = null;
+                shareButton.current.disabled = true;
+            }
+        },
         call,
         name,
         shareModal,
         receiveModal
     };
 
-    const openShareModal = () => {
-        shareModal.current.style.display = 'block';
-    };
-
-    const openReceiveModal = () => {
-        receiveModal.current.style.display = 'block';
-    };
+    const peerModalOpen = (modal) => modal.current.style.display = 'block';
 
     return (
         <>
-            <button onClick={openShareModal} className="meeting_actions_btn">Share with peer</button>
-            <button onClick={openReceiveModal} className="meeting_actions_btn">Receive from peer</button>
+            <button ref={shareButton} onClick={() => peerModalOpen(shareModal)} className="meeting_actions_btn">Share with peer</button>
+            <button ref={receiveButton} onClick={() => peerModalOpen(receiveModal)} className="meeting_actions_btn">Receive from peer</button>
             <PeerShare {...rtcOptions} />
             <PeerReceive {...rtcOptions} {...{setPeerStreams}}/>
         </>

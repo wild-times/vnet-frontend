@@ -2,7 +2,7 @@ import { useRef } from "react";
 
 
 export default function PeerReceive (props) {
-    const { call, signalling, name, signalTypes, setPeerStreams, receiveModal } = props;
+    const { call, signalling, name, signalTypes, setPeerStreams, receiveModal, rivalEnd } = props;
     const status = useRef(null);
     const statusPeer = useRef(null);
     const streamIds = [];
@@ -13,6 +13,7 @@ export default function PeerReceive (props) {
 
     const connectEvent = (event_) => {
         event_.preventDefault();
+        rivalEnd(false);
         const f = new FormData(event_.target);
         const sig = signalling(f.get('code'), status.current);
         [...event_.target].forEach((element) => element.disabled = true);

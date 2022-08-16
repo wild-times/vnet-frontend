@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 
 
 export default function PeerShare (props) {
-    const { call, signalling, name, signalTypes, shareModal } = props;
+    const { call, signalling, name, signalTypes, shareModal, rivalEnd } = props;
     const [randomCode, setRandomCode] = useState(0);
     const status = useRef(null);
     const statusPeer = useRef(null);
@@ -180,6 +180,7 @@ export default function PeerShare (props) {
     const startSharing = () => setRandomCode(Math.floor(Math.random() * (1000000 - 100000 + 1) + 100000));
 
     if (randomCode) {
+        rivalEnd(true);
         initSharing();
     }
 
