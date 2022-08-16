@@ -7,11 +7,12 @@ export function MeetingVideo (props) {
     const { you, name, stream, apprName } = props;
     const finalName = `${name}${you? ' (you)': ''}`;
     const [view, setView] = useState(null);
+    const [viewError, setViewError] = useState(false);
 
     useEffect(() => {
         if (stream) {
             const render = new VideoStreamRenderer(stream);
-            render.createView().then((el) => setView(el));
+            render.createView().then((el) => setView(el)).catch(() => setViewError(true));
 
             return () => {
                 if (render && render.dispose){
@@ -22,6 +23,15 @@ export function MeetingVideo (props) {
     }, [stream]);
 
     if (!view) {
+        if (viewError) {
+            return (
+                <div className={`${apprName} video_box_loading`}>
+                    <h3 style={{margin: 'auto', color: 'azure'}} className="center-mix">Could not load, please reload the page</h3>
+                    <p className="stream-name">{finalName? finalName: ''}</p>
+                </div>
+            )
+        }
+
         return (
             <div className={`${apprName} video_box_loading`}>
                 <SmallLoader />
