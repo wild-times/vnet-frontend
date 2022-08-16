@@ -2,7 +2,7 @@ import { useRef } from "react";
 
 
 export default function PeerReceive (props) {
-    const { call, signalling, name, signalTypes, setPeerStreams, receiveModal, rivalEnd } = props;
+    const { call, signalling, name, signalTypes, setPeerStreams, receiveModal, rivalEnd, peerStatusText } = props;
     const status = useRef(null);
     const statusPeer = useRef(null);
     const streamIds = [];
@@ -44,6 +44,7 @@ export default function PeerReceive (props) {
             peerConnection.addEventListener('connectionstatechange', () => {
                 if (peerConnection.connectionState === 'connected') {
                     statusPeer.current.innerText = 'Connected to peer';
+                    peerStatusText.current.innerText = 'Connected to peer';
                     closeReceiveModal();
                     buildStreams();
 
@@ -60,8 +61,10 @@ export default function PeerReceive (props) {
 
                 } else if (peerConnection.connectionState === 'connecting') {
                     statusPeer.current.innerText = 'Connecting to peer';
+                    peerStatusText.current.innerText = 'Connecting to peer';
                 } else {
                     statusPeer.current.innerText = 'Not Connected to peer';
+                    peerStatusText.current.innerText = '';
                     clearInterval(streamQuery);
                     setPeerStreams([]);
                 }

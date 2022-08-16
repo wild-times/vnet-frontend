@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 
 
 export default function PeerShare (props) {
-    const { call, signalling, name, signalTypes, shareModal, rivalEnd } = props;
+    const { call, signalling, name, signalTypes, shareModal, rivalEnd, peerStatusText } = props;
     const [randomCode, setRandomCode] = useState(0);
     const status = useRef(null);
     const statusPeer = useRef(null);
@@ -71,7 +71,7 @@ export default function PeerShare (props) {
             channel.addEventListener('message', async (channelEvent) => {
                 const channelMessage = JSON.parse(channelEvent.data);
 
-                if (channelMessage.type === 'streams_query') {
+                if (channelMessage.type === 'streams_query' && call.state === 'Connected' && peerConnection.connectionState === "connected") {
                     const newStreams = collectStreams();
 
                     // find the difference in streams
@@ -107,6 +107,7 @@ export default function PeerShare (props) {
             peerConnection.addEventListener('connectionstatechange', () => {
                 if (peerConnection.connectionState === 'connected') {
                     statusPeer.current.innerText = 'Connected to peer';
+                    peerStatusText.current.innerText = 'Connected to peer';
                     closeShareModal();
 
                     // close the peer connection when the call ends
@@ -119,8 +120,10 @@ export default function PeerShare (props) {
 
                 } else if (peerConnection.connectionState === 'connecting') {
                     statusPeer.current.innerText = 'Connecting to peer';
+                    peerStatusText.current.innerText = 'Connecting to peer';
                 } else {
                     statusPeer.current.innerText = 'Not Connected to peer';
+                    peerStatusText.current.innerText = '';
                 }
             });
 

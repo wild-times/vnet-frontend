@@ -58,6 +58,7 @@ export default function MeetingRoom (props) {
     const [participants, setParticipants] = useState([]);
     const [peerStreams, setPeerStreams] = useState([]);
     const statusText = useRef(null);
+    const peerStatusText = useRef(null);
     const call = callAgent.calls.length? callAgent.calls[0]: null;
 
     const leaveMeetingEvent = (event_) => {
@@ -128,6 +129,10 @@ export default function MeetingRoom (props) {
                         <hr />
                         <span ref={statusText} />
                         <hr />
+                        <span>
+                            <span ref={peerStatusText}/>
+                            {peerStreams.length? <span>: { peerStreams.length } received </span>: null }
+                        </span>
                     </div>
                 </div>
 
@@ -139,7 +144,7 @@ export default function MeetingRoom (props) {
 
             <section className="meeting_actions">
                 <div className="meeting_actions_options">
-                    <SetUpPeer name={callAgent.displayName} {...{setPeerStreams, call}}/>
+                    <SetUpPeer name={callAgent.displayName} {...{setPeerStreams, call, peerStatusText}}/>
                     <button onClick={leaveMeetingEvent} className="meeting_actions_btn">Leave Call</button>
                 </div>
             </section>
