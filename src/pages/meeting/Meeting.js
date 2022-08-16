@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { NavLink, useParams } from 'react-router-dom';
 import { useQuery } from "react-query";
 import { AzureCommunicationTokenCredential } from '@azure/communication-common';
@@ -20,6 +20,11 @@ function MeetingLite (props) {
     const [deviceManager, setDeviceManager] = useState(null);
     const [devicePermissions, setDevicePermissions] = useState(null);
     const [localStream, setLocalStream] = useState(null);
+    const callItems = useRef([callClient, callAgent, deviceManager]);
+
+    useEffect(() => {
+        callItems.current = [callClient, callAgent, deviceManager];
+    }, [callClient, callAgent, deviceManager]);
 
     useEffect(() => {
         //  name to be used in the display
@@ -35,23 +40,25 @@ function MeetingLite (props) {
 
         // create acs variables
         const acs = async () => {
-            try {
-                const _tokenCredential = new AzureCommunicationTokenCredential(user['acsToken']);
-                const _callClient = new CallClient();
-                const _callAgent = await _callClient.createCallAgent(_tokenCredential, {
-                    displayName: getDisplayName()
-                });
+            setTimeout(() => {
+                if (!callItems.current.every(Boolean)) {
+                    inMeetingSwitch(4); // after 75 seconds and none of the items above, then poor connection detected
+                }
+            }, 75000);
 
-                const _deviceManager = await _callClient.getDeviceManager();
-                const _devicePermission = await _deviceManager.askDevicePermission({
-                    audio: true,
-                    video: true
-                });
+            const _tokenCredential = new AzureCommunicationTokenCredential(user['acsToken']);
+            const _callClient = new CallClient();
+            const _callAgent = await _callClient.createCallAgent(_tokenCredential, {
+                displayName: getDisplayName()
+            });
 
-                return [_tokenCredential, _callClient, _callAgent, _deviceManager, _devicePermission]
-            } catch (e) {
-                inMeetingSwitch(4);
-            }
+            const _deviceManager = await _callClient.getDeviceManager();
+            const _devicePermission = await _deviceManager.askDevicePermission({
+                audio: true,
+                video: true
+            });
+
+            return [_tokenCredential, _callClient, _callAgent, _deviceManager, _devicePermission]
         };
 
         acs().then((_args) => {
@@ -69,7 +76,7 @@ function MeetingLite (props) {
                 callAgent.dispose();
             }
         };
-    }, [meeting, user, callAgent]);
+    }, [meeting, user]);
 
     const toShow = (() => {
         let comp = <LoadingScreen message={`Preparing to set up ${meeting['title']}`} />;
