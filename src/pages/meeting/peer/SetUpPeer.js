@@ -5,7 +5,7 @@ import reqData from '../../../utils/wild';
 
 
 export default function SetUpPeer (props) {
-    const { name, setPeerStreams, call } = props;
+    const { name, setPeerStreams, call, peerStatusText } = props;
     const shareModal = useRef(null);
     const receiveModal = useRef(null);
     const shareButton = useRef(null);
@@ -39,7 +39,8 @@ export default function SetUpPeer (props) {
         call,
         name,
         shareModal,
-        receiveModal
+        receiveModal,
+        peerStatusText
     };
 
     const peerModalOpen = (modal) => modal.current.style.display = 'block';
