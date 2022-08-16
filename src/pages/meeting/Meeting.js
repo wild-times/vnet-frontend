@@ -13,7 +13,7 @@ import { fetchMeeting, getUserDetails } from "../../utils/req";
 
 function MeetingLite (props) {
     const { user, meeting } = props;
-    const [inMeeting, inMeetingSwitch] = useState(1); // choices are 1, 2, 3: 1 = set up, 2 = meeting room/in meeting, 3 = left meeting.
+    const [inMeeting, inMeetingSwitch] = useState(1); // 1 = set up, 2 = meeting room/in meeting, 3 = left meeting, 4 = poor connection
     const [tokenCredential, setTokenCredential] = useState(null);
     const [callClient, setCallClient] = useState(null);
     const [callAgent, setCallAgent] = useState(null);
@@ -35,27 +35,33 @@ function MeetingLite (props) {
 
         // create acs variables
         const acs = async () => {
-            const _tokenCredential = new AzureCommunicationTokenCredential(user['acsToken']);
-            const _callClient = new CallClient();
-            const _callAgent = await _callClient.createCallAgent(_tokenCredential, {
-                displayName: getDisplayName()
-            });
+            try {
+                const _tokenCredential = new AzureCommunicationTokenCredential(user['acsToken']);
+                const _callClient = new CallClient();
+                const _callAgent = await _callClient.createCallAgent(_tokenCredential, {
+                    displayName: getDisplayName()
+                });
 
-            const _deviceManager = await _callClient.getDeviceManager();
-            const _devicePermission = await _deviceManager.askDevicePermission({
-                audio: true,
-                video: true
-            });
+                const _deviceManager = await _callClient.getDeviceManager();
+                const _devicePermission = await _deviceManager.askDevicePermission({
+                    audio: true,
+                    video: true
+                });
 
-            return [_tokenCredential, _callClient, _callAgent, _deviceManager, _devicePermission]
+                return [_tokenCredential, _callClient, _callAgent, _deviceManager, _devicePermission]
+            } catch (e) {
+                inMeetingSwitch(4);
+            }
         };
 
         acs().then((_args) => {
-            setTokenCredential(_args[0]);
-            setCallClient(_args[1]);
-            setCallAgent(_args[2]);
-            setDeviceManager(_args[3]);
-            setDevicePermissions(_args[4]);
+            if (_args) {
+                setTokenCredential(_args[0]);
+                setCallClient(_args[1]);
+                setCallAgent(_args[2]);
+                setDeviceManager(_args[3]);
+                setDevicePermissions(_args[4]);
+            }
         }).catch((e) => console.error(e));
 
         return () => {
@@ -88,6 +94,10 @@ function MeetingLite (props) {
             } else if (inMeeting === 3) {
                 comp = <LeftMeeting {...dep} />
             }
+        }
+
+        if (inMeeting === 4) {
+            comp = <h1 className="center-mix">You seem to have a poor internet connection</h1>
         }
 
         return comp;
