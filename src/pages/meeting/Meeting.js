@@ -27,6 +27,12 @@ function MeetingLite (props) {
     }, [callClient, callAgent, deviceManager]);
 
     useEffect(() => {
+        const connectionTimeOutCallBack = () => {
+            if (!callItems.current.every(Boolean)) {
+                inMeetingSwitch(4); // after 75 seconds and none of the items above, then poor connection detected
+            }
+        };
+
         //  name to be used in the display
         const getDisplayName = () => {
             let name = user['username'];
@@ -40,12 +46,7 @@ function MeetingLite (props) {
 
         // create acs variables
         const acs = async () => {
-            setTimeout(() => {
-                if (!callItems.current.every(Boolean)) {
-                    inMeetingSwitch(4); // after 75 seconds and none of the items above, then poor connection detected
-                }
-            }, 75000);
-
+            setTimeout(connectionTimeOutCallBack, 75000);
             const _tokenCredential = new AzureCommunicationTokenCredential(user['acsToken']);
             const _callClient = new CallClient();
             const _callAgent = await _callClient.createCallAgent(_tokenCredential, {
@@ -72,6 +73,8 @@ function MeetingLite (props) {
         }).catch((e) => console.error(e));
 
         return () => {
+            clearTimeout(connectionTimeOutCallBack);
+
             if (inMeeting === 1 && callAgent && !callAgent.disposed) {
                 callAgent.dispose();
             }
