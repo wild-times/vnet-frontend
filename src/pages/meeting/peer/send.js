@@ -15,6 +15,8 @@ export default function PeerShare (props) {
         const streamIds = [];
         const streamsOG = [];
 
+        const destroyOgTracks = () => streamsOG.forEach((streamOG) => streamOG.getTracks().forEach((track) => track.stop()));
+
         // collect all streams
         function collectStreams () {
             const streamHomes = [...document.getElementsByClassName('video-stream-home')];
@@ -28,6 +30,8 @@ export default function PeerShare (props) {
                 ].every(Boolean)
             });
             const collectedStreams = [];
+
+            destroyOgTracks();
 
             streamIds.splice(0, streamIds.length, ...filteredStreamHomes.map((el) => {
                 const lStream = el['firstElementChild']['firstElementChild'].srcObject.clone();
@@ -109,7 +113,7 @@ export default function PeerShare (props) {
                     call.on("stateChanged", () => {
                         if (call.state === 'Disconnected') {
                             peerConnection.close();
-                            streamsOG.forEach((streamOG) => streamOG.getTracks().forEach((track) => track.stop()));
+                            destroyOgTracks();
                         }
                     });
 
