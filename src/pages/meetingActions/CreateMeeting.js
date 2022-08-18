@@ -3,7 +3,7 @@ import { useNavigate, NavLink } from 'react-router-dom';
 
 import { saveNewMeeting } from "../../utils/req";
 import { zeroPen } from '../../utils/misc';
-import reqData from '../../utils/wild';
+import { appItems } from '../../index';
 import '../style/CreateMeeting.css';
 
 
@@ -50,7 +50,7 @@ export default function CreateMeeting (props) {
 
         const handleMeetingRedirection = (meetingDetails) => {
             const _meetingId = meetingDetails['meetingId'];
-            const navUrl = joinNow? `/conf/${_meetingId}/`: `/?show=${_meetingId}`;
+            const navUrl = joinNow? `/conf/${_meetingId}/`: '/';
             navigate(navUrl);
         };
 
@@ -82,7 +82,7 @@ export default function CreateMeeting (props) {
 
     return (
         <div className="create-innerbox">
-            <div className="create-topbox" style={{backgroundImage: `url(${reqData.vnetBackgroundLarge})`}}>
+            <div className="create-topbox" style={{backgroundImage: `url(${appItems.vnetBackgroundLarge})`}}>
                 <h1>Create Meeting</h1>
             </div>
 

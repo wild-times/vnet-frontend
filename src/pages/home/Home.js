@@ -80,10 +80,9 @@ function ExistingMeeting (props) {
 }
 
 // this is the initial page
-export default function Home (props) {
-    const { token } = props;
+export default function Home () {
     const navigate = useNavigate();
-    const { status, data: _meetings } = useQuery('meetings', () => fetchMeetings(token));
+    const { status, data: _meetings } = useQuery('meetings', () => fetchMeetings());
 
     if (status === 'loading') {
         return <LoadingScreen message='Getting your meetings' />

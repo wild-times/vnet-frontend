@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import PeerReceive from './recieve';
 import PeerShare from './send';
-import reqData from '../../../utils/wild';
+import { appItems} from "../../../index";
 
 
 export default function SetUpPeer (props) {
@@ -14,7 +14,7 @@ export default function SetUpPeer (props) {
     // noinspection JSUnusedGlobalSymbols
     const rtcOptions = {
         signalling: (code, statusDiv) => {
-            const url = `ws://${window.location.hostname}:8000${reqData.signallingServer}${code}/`;
+            const url = `${appItems.signallingServer}${code}/`;
             const socket = new WebSocket(url);
             socket.onopen = () => statusDiv.innerText = 'Connected to signalling server';
             socket.onclose = () => statusDiv.innerText = 'Not Connected to signalling server';

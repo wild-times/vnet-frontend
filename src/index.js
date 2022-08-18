@@ -6,7 +6,21 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const rootDiv = document.getElementById('root');
+const root = ReactDOM.createRoot(rootDiv);
+
+export const appItems = rootDiv.dataset? {...rootDiv.dataset}: {
+    userDetailsUrl: '',
+    getMeetingsUrl: '',
+    createMeetingUrl: '',
+    signallingServer: '',
+    profilePage: '',
+    vnetLogo: '',
+    vnetBackground: '',
+    vnetBackgroundLarge: '',
+    csrfToken: '',
+};
+
 root.render(
     <QueryClientProvider client={new QueryClient()}>
         <App />
