@@ -1,4 +1,6 @@
 # **VNET MEETINGS FRONTEND**
+VNET is a video conferencing web application. It's main feature is that if users are on the same local network, they can choose to share the downstream video feed from one device on the local network to other devices on the network.
+
 This is the front-end application for VNET meetings. It is a single-page application built in JavaScript using ReactJS. To use it follow the instructions [here](https://github.com/wild-times/vnet-backend#using-this-repository).
 
 ## **Content.**
